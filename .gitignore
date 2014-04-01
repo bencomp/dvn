@@ -22,3 +22,4 @@
 DVN-root/DVN-web/target
 doc/sphinx/build
 DVN-root/DVN-web/nb-configuration.xml
+/.DS_Store
