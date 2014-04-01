@@ -424,112 +424,24 @@
             <version>2.6.9-java_1_4</version>
         </dependency>
 
-        <!-- non-public SWORD API jars -->
-        <dependency>
-            <groupId>org.swordapp.server</groupId>
-            <artifactId>sword2-server</artifactId>
-            <version>1.0-classes</version>
-        </dependency>                
-        <dependency>
-            <groupId>org.apache.abdera</groupId>
-            <artifactId>abdera-core</artifactId>
-            <version>1.1.1</version>
-        </dependency>                
-        <dependency>
-            <groupId>org.apache.abdera</groupId>
-            <artifactId>abdera-i18n</artifactId>
-            <version>1.1.1</version>
-        </dependency>                
-        <dependency>
-            <groupId>org.apache.abdera</groupId>
-            <artifactId>abdera-parser</artifactId>
-            <version>1.1.1</version>
-        </dependency>                
-        <dependency>
-            <groupId>org.apache.axiom</groupId>
-            <artifactId>axiom-api</artifactId>
-            <version>1.2.10</version>
-        </dependency>                
-        <dependency>
-            <groupId>org.apache.axiom</groupId>
-            <artifactId>axiom-impl</artifactId>
-            <version>1.2.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.5</version>
-        </dependency>                        
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.2.1</version>
-        </dependency>                
-        <dependency>
-            <groupId>xom</groupId>
-            <artifactId>xom</artifactId>
-            <version>1.1</version>
-        </dependency>
-        
-        <!-- non-public EZID jar -->
-       <dependency>
-            <groupId>edu.ucsb.nceas.ezid</groupId>
-            <artifactId>ezid</artifactId>
-            <version>0.9.0</version>
-        </dependency>           
-       <dependency>
-            <groupId>org.apache.commons.codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.6</version>
-        </dependency>
-       <dependency>
-            <groupId>org.apache.http.client.fluent</groupId>
-            <artifactId>fluent-hc</artifactId>
-            <version>4.2.5</version>
-        </dependency>
-       <dependency>
-            <groupId>org.apache.http.impl.client</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.2.5</version>
-        </dependency>
-       <dependency>
-            <groupId>org.apache.http.client.cache</groupId>
-            <artifactId>httpclient-cache</artifactId>
-            <version>4.2.5</version>
-        </dependency>
-       <dependency>
-            <groupId>org.apache.http</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>4.2.4</version>
-        </dependency>
-       <dependency>
-            <groupId>org.apache.http.entity.mime</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.2.5</version>
-        </dependency>
-        
-       <!-- non-public fits.jar -->
-       <dependency>
-            <groupId>nom.tam.fits</groupId>
-            <artifactId>fits</artifactId>
-            <version>2012-10-25-generated</version>
-        </dependency>
-        
-       <!-- non-public xalan.jar is -->
-       <dependency>
-            <groupId>org.apache.xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <version>2.4.1</version>
-        </dependency>
+		<!-- OPENSAML -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml</artifactId>
+			<version>2.5.1-1</version>
+		</dependency>
+		<!-- Solution of "Could not find artifact xerces:xml-apis:jar:1.4.01 " -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>xmltooling</artifactId>
+			<version>1.3.2-1</version>
+		</dependency>
 
-       <!-- non-public for network data ingest -->
-       <dependency>
-            <groupId>org.sqlite</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.6.16</version>
-        </dependency>        
-                                                                                                                                                                                                                                        
-    </dependencies>
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>openws</artifactId>
+			<version>1.4.2-1</version>
+		</dependency>
 
     <build>
 
