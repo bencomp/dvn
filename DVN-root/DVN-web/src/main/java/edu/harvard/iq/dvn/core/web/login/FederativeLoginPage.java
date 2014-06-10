@@ -135,6 +135,23 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
 
         if (shibProps == null || shibProps.isEmpty()) {
         	// There is no Shibboleth session; configuration is messed up
+//        	errMessage = "ERROR:  is empty. Try to read shibboleth properties again.";
+//        	LOGGER.log(Level.SEVERE, errMessage);
+//        	//try to read the shibboleth environment 
+//        	readShibProps();
+//        } 
+//       
+//        ///check the shibProps again and if it is still null redirect to surfconnect
+//        if (shibProps == null || shibProps.isEmpty()) {
+//        	String baseUrl = request.getRequestURL().substring(0, request.getRequestURL().length() - request.getRequestURI().length());
+//        	String surfconnectUrl = baseUrl + "/Shibboleth.sso/Login?target=" + baseUrl + "%2Fdvn%2Ffaces%2Flogin%2FFederativeLoginPage.xhtml%3FclearWorkflow%3Dtrue";
+//        	try {
+//        		LOGGER.log(Level.INFO, "surfconnectUrl: " + surfconnectUrl);
+//				response.sendRedirect(surfconnectUrl);
+//			} catch (IOException e) {
+//				LOGGER.log(Level.SEVERE, e.getMessage());
+//			}
+
             errMessage = "No assertion; this stage should never be reached; check the Shibboleth configuration";
             loginFailed = true;
             LOGGER.log(Level.SEVERE, errMessage);
