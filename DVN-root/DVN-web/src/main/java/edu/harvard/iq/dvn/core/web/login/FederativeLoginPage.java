@@ -103,6 +103,10 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
     public void init() {
         super.init();
         
+        if (clearWorkflow != null) {
+            LoginWorkflowBean lwf = (LoginWorkflowBean) getBean("LoginWorkflowBean");
+            lwf.clearWorkflowState();
+        }
         
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         HttpSession session = (HttpSession) context.getSession(true);
@@ -128,7 +132,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
         
         // Get Shibboleth session variables
         shibProps = (Map<String, String>)session.getAttribute(SHIB_PROPS_SESSION);
-        
+
         if (shibProps == null || shibProps.isEmpty()) {
         	// There is no Shibboleth session; configuration is messed up
             errMessage = "No assertion; this stage should never be reached; check the Shibboleth configuration";
