@@ -57,7 +57,7 @@ public interface VDCServiceLocal extends java.io.Serializable  {
     
     public VDC findById(Long id);
 
-    public List findAll();
+    public List<VDC> findAll();
     public List<Long> findAllIds();
     
     public List<Object[]> findInfoAll(); // returns id, name, afilliation, and restricted
@@ -73,16 +73,16 @@ public interface VDCServiceLocal extends java.io.Serializable  {
     
     public void addContributorRequest(Long vdcId, Long userId);
 
-    java.util.List getLinkedCollections(VDC vdc);
+    List<?> getLinkedCollections(VDC vdc);
 
-    java.util.List getLinkedCollections(VDC vdc, boolean getHiddenCollections);
+    List<?> getLinkedCollections(VDC vdc, boolean getHiddenCollections);
      
     public void delete (Long vdcId);
     
-    public List findAllNonHarvesting();
+    public List<VDC> findAllNonHarvesting();
     public List<Object[]> findInfoAllNonHarvesting(); // returns id and name
 
-    public List findVdcsNotInGroups();
+    public List<VDC> findVdcsNotInGroups();
     
     public List<VDC> findVdcsNotInGroups(String dtype);
     
@@ -92,23 +92,23 @@ public interface VDCServiceLocal extends java.io.Serializable  {
 
     public List<VDC> getUserVDCs(Long userId); 
     
-    public java.util.List<Long> getOwnedStudyIds(Long vdcId);
+    public List<Long> getOwnedStudyIds(Long vdcId);
     
     public Long getOwnedStudyCount(Long vdcId);
 
     public Long getReleasedStudyCount(Long vdcId);
 
-    public List getPagedData(Long vdcGroupId, int firstRow, int totalRows, String orderBy, String order);
+    public List<?> getPagedData(Long vdcGroupId, int firstRow, int totalRows, String orderBy, String order);
 
-    public List getPagedDataByActivity(Long vdcGroupId, int firstRow, int totalRows, String order);
+    public List<?> getPagedDataByActivity(Long vdcGroupId, int firstRow, int totalRows, String order);
 
-    public List getPagedDataByLastUpdateTime(Long vdcGroupId, int firstRow, int totalRows, String order);
+    public List<?> getPagedDataByLastUpdateTime(Long vdcGroupId, int firstRow, int totalRows, String order);
 
-    public List getManagedPagedDataByOwnedStudies(int firstRow, int totalRows, String order);
+    public List<?> getManagedPagedDataByOwnedStudies(int firstRow, int totalRows, String order);
 
-    public List getManagedPagedDataByLastUpdated(int firstRow, int totalRows, String order);
+    public List<?> getManagedPagedDataByLastUpdated(int firstRow, int totalRows, String order);
 
-    public List getManagedPagedData(int firstRow, int totalRows, String orderBy, String order);
+    public List<?> getManagedPagedData(int firstRow, int totalRows, String orderBy, String order);
 
     public Long getUnrestrictedVdcCount(long vdcGroupId);
 

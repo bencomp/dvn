@@ -19,8 +19,7 @@
 */
 package edu.harvard.iq.dvn.core.mail;
 
-import edu.harvard.iq.dvn.core.study.StudyFile;
-import edu.harvard.iq.dvn.core.study.StudyVersion;
+import edu.harvard.iq.dvn.core.study.StudyFileEditBean;
 import edu.harvard.iq.dvn.core.vdc.VDC;
 import edu.harvard.iq.dvn.ingest.dsb.DSBIngestMessage;
 import java.util.List;
@@ -37,7 +36,7 @@ public interface MailServiceLocal  extends java.io.Serializable  {
 
     public void sendMail( String from, String to, String subject, String messageTest);
     
-    public void sendMail(String from, String to, String subject, String messageText, Map extraHeaders);
+    public void sendMail(String from, String to, String subject, String messageText, Map<String, String> extraHeaders);
 
     public void sendDoNotReplyMail(String to, String subject, String messageText);
     
@@ -71,9 +70,9 @@ public interface MailServiceLocal  extends java.io.Serializable  {
 
     public void sendFileAccessResolvedNotification(String userEmail, String studyTitle,String globalId, List<String> acceptedFiles, List<String> rejectedFiles, String url, String adminEmail);
     
-    public void sendIngestRequestedNotification(DSBIngestMessage ingestMessage, List subsettableFiles);
+    public void sendIngestRequestedNotification(DSBIngestMessage ingestMessage, List<StudyFileEditBean> subsettableFiles);
 
-    public void sendIngestCompletedNotification(DSBIngestMessage ingestMessage, List successfulFiles, List problemFiles);    
+    public void sendIngestCompletedNotification(DSBIngestMessage ingestMessage, List<StudyFileEditBean> successfulFiles, List<StudyFileEditBean> problemFiles);    
 
     public void sendAddSiteNotification(String dataverseCreatorEmail, String siteName, String siteAddress);
 

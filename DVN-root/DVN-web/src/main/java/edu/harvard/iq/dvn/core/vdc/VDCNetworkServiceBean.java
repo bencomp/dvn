@@ -306,8 +306,8 @@ public class VDCNetworkServiceBean implements VDCNetworkServiceLocal {
             ExportTimerInfo exportTimerInfo = new ExportTimerInfo(exportPeriod,exportHourOfDay, exportDayOfWeek);
             
             logger.info("Just checking timerService: ");
-            for (Object timer:timerService.getTimers()) {
-                logger.info("Found timer: "+((Timer)timer).getInfo());
+            for (Timer timer:timerService.getTimers()) {
+                logger.info("Found timer: "+timer.getInfo());
             }
 //            timerService.createTimer(initExpirationDate, intervalDuration,exportTimerInfo);
             dvnTimerService.createTimer(initExpirationDate, intervalDuration, exportTimerInfo);

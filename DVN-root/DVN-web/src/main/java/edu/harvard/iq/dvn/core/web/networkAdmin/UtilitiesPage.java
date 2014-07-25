@@ -275,7 +275,7 @@ public class UtilitiesPage extends VDCBaseBean implements java.io.Serializable  
         try {
             VDC vdc =  vdcService.findById( new Long( indexDVId) );
             if (vdc != null) { 
-                List studyIDList = new ArrayList();
+                List<Long> studyIDList = new ArrayList<Long>();
                 for (Study study :  vdc.getOwnedStudies() ) {
                     studyIDList.add( study.getId() );
                 }
@@ -468,7 +468,7 @@ public class UtilitiesPage extends VDCBaseBean implements java.io.Serializable  
     }
     
     public List<SelectItem> getHarvestDVs() {
-        List harvestDVSelectItems = new ArrayList<SelectItem>();
+        List<SelectItem> harvestDVSelectItems = new ArrayList<SelectItem>();
         Iterator iter = harvestingDataverseService.findAll().iterator();
         while (iter.hasNext()) {
             HarvestingDataverse hd = (HarvestingDataverse) iter.next();
@@ -648,7 +648,7 @@ public class UtilitiesPage extends VDCBaseBean implements java.io.Serializable  
     //L.A.}
   
      public List<SelectItem> getImportDVs() {
-        List importDVsSelectItems = new ArrayList<SelectItem>();
+        List<SelectItem> importDVsSelectItems = new ArrayList<SelectItem>();
         Iterator iter = vdcService.findAllNonHarvesting().iterator();
         while (iter.hasNext()) {
             VDC vdc = (VDC) iter.next();
@@ -721,7 +721,7 @@ public class UtilitiesPage extends VDCBaseBean implements java.io.Serializable  
                                 
                                 if ( !filesToUpload.isEmpty() ) {
 
-                                    List<StudyFileEditBean> fileBeans = new ArrayList();
+                                    List<StudyFileEditBean> fileBeans = new ArrayList<StudyFileEditBean>();
                                     for (File file : filesToUpload.keySet()) {
                                         StudyFileEditBean fileBean = new StudyFileEditBean( file, studyService.generateFileSystemNameSequence(), study );
                                         fileBean.getFileMetadata().setCategory (filesToUpload.get(file));
@@ -1208,27 +1208,27 @@ public class UtilitiesPage extends VDCBaseBean implements java.io.Serializable  
         context.addMessage(component, facesMsg);          
     }
     
-    private void addStudyMessages (String component, Map tokenizedLists) {
+    private void addStudyMessages (String component, Map<String, ?> tokenizedLists) {
 
-            if ( tokenizedLists.get("idList") != null && !((List) tokenizedLists.get("idList")).isEmpty() ) {            
+            if ( tokenizedLists.get("idList") != null && !((List<?>) tokenizedLists.get("idList")).isEmpty() ) {            
                 addMessage( component, "The following studies were successfully processed: " + tokenizedLists.get("idList") );
             }
-            if ( tokenizedLists.get("ignoredList") != null && !((List) tokenizedLists.get("ignoredList")).isEmpty() ) {            
+            if ( tokenizedLists.get("ignoredList") != null && !((List<?>) tokenizedLists.get("ignoredList")).isEmpty() ) {            
                 addMessage( component, "The following studies were ignored (" 
                         + ((String) tokenizedLists.get("ignoredReason")) + "): " + tokenizedLists.get("ignoredList") );
             }            
-            if ( tokenizedLists.get("invalidStudyIdList") != null && !((List) tokenizedLists.get("invalidStudyIdList")).isEmpty() ) {
+            if ( tokenizedLists.get("invalidStudyIdList") != null && !((List<?>) tokenizedLists.get("invalidStudyIdList")).isEmpty() ) {
                 addMessage( component, "The following study ids were invalid: " + tokenizedLists.get("invalidStudyIdList") ); 
             }
-            if ( tokenizedLists.get("failedTokenList") != null && !((List) tokenizedLists.get("failedTokenList")).isEmpty() ) {
+            if ( tokenizedLists.get("failedTokenList") != null && !((List<?>) tokenizedLists.get("failedTokenList")).isEmpty() ) {
                 addMessage( component, "The following tokens could not be interpreted: " + tokenizedLists.get("failedTokenList") );
             }
     }
 
     
-    private Map determineIds(String ids) {
-        List<Long> idList = new ArrayList();
-        List<String> failedTokenList = new ArrayList(); 
+    private Map<String, List<?>> determineIds(String ids) {
+        List<Long> idList = new ArrayList<Long>();
+        List<String> failedTokenList = new ArrayList<String>(); 
                     
         StringTokenizer st = new StringTokenizer(ids, ",; \t\n\r\f");
         while (st.hasMoreTokens()) {
@@ -1253,7 +1253,7 @@ public class UtilitiesPage extends VDCBaseBean implements java.io.Serializable  
             }
         }
         
-        Map returnMap = new HashMap();
+        Map<String, List<?>> returnMap = new HashMap<String, List<?>>();
         returnMap.put("idList", idList);
         returnMap.put("failedTokenList", failedTokenList);
         
@@ -1261,9 +1261,9 @@ public class UtilitiesPage extends VDCBaseBean implements java.io.Serializable  
     }   
 
 
-    private Map determineStudyIds(String studyIds) {
-        Map tokenizedLists = determineIds(studyIds);
-        List invalidStudyIdList = new ArrayList();
+    private Map<String, List<?>> determineStudyIds(String studyIds) {
+        Map<String, List<?>> tokenizedLists = determineIds(studyIds);
+        List<Long> invalidStudyIdList = new ArrayList<Long>();
 
         for (Iterator<Long>  iter = ((List<Long>) tokenizedLists.get("idList")).iterator(); iter.hasNext();) {
             Long id = iter.next();

@@ -59,9 +59,10 @@ import javax.sql.DataSource;
 /**
  *
  * @author roberttreacy
+ * @param <V>
  */
 @Stateless
-public class VDCServiceBean implements VDCServiceLocal {
+public class VDCServiceBean<V> implements VDCServiceLocal {
 
     @EJB
     VDCCollectionServiceLocal vdcCollectionService;
@@ -97,12 +98,12 @@ public class VDCServiceBean implements VDCServiceLocal {
     }
 
     public void createScholarDataverse(Long userId, String firstName, String lastName, String name, String affiliation, String alias, String dataverseType) {
-        List studyFields = studyFieldService.findAll();
+        List<StudyField> studyFields = studyFieldService.findAll();
         createScholarDataverse(userId,firstName, lastName, name, affiliation, alias, dataverseType, studyFields);
     }
 
     /** scholar dataverse */
-    private void createScholarDataverse(Long userId, String firstName, String lastName, String name, String affiliation, String alias, String dataverseType, List studyFields) {
+    private void createScholarDataverse(Long userId, String firstName, String lastName, String name, String affiliation, String alias, String dataverseType, List<StudyField> studyFields) {
         VDC sDV = new VDC();
         VDCNetwork vdcNetwork = vdcNetworkService.findRootNetwork();
         em.persist(sDV);
@@ -122,11 +123,11 @@ public class VDCServiceBean implements VDCServiceLocal {
         sDV.setFooter(vdcNetwork.getDefaultVDCFooter());
         sDV.setRestricted(true);
         sDV.setDisplayAnnouncements(false);
-        ArrayList advancedSearchFields = new ArrayList();
-        ArrayList searchResultsFields = new ArrayList();
+        ArrayList<StudyField> advancedSearchFields = new ArrayList<StudyField>();
+        ArrayList<StudyField> searchResultsFields = new ArrayList<StudyField>();
        
-        for (Iterator it = studyFields.iterator(); it.hasNext();) {
-            StudyField elem = (StudyField) it.next();
+        for (Iterator<StudyField> it = studyFields.iterator(); it.hasNext();) {
+            StudyField elem = it.next();
             if (elem.isAdvancedSearchField()) {
                 advancedSearchFields.add(elem);
             }
@@ -177,7 +178,7 @@ public class VDCServiceBean implements VDCServiceLocal {
         try {
             conn = dvnDatasource.getConnection();
             updateStatement = conn.prepareStatement(updateString);
-            int rowcount = updateStatement.executeUpdate();
+            updateStatement.executeUpdate();
         } catch (java.sql.SQLException e) {
             // Do nothing, just return null.
         }
@@ -213,8 +214,8 @@ public class VDCServiceBean implements VDCServiceLocal {
     }
 
     private void traverseCollections(Collection<VDCCollection> collections) {
-        for (Iterator it = collections.iterator(); it.hasNext();) {
-            VDCCollection elem = (VDCCollection) it.next();
+        for (Iterator<VDCCollection> it = collections.iterator(); it.hasNext();) {
+            VDCCollection elem = it.next();
             elem.getId();
 
             Collection<VDCCollection> subcollections = elem.getSubCollections();
@@ -264,7 +265,7 @@ public class VDCServiceBean implements VDCServiceLocal {
         return list;
     }    
     
-    public List findAll() {
+    public List<VDC> findAll() {
         return em.createQuery("select object(o) from VDC as o order by o.name").getResultList();
     }
     
@@ -302,13 +303,11 @@ public class VDCServiceBean implements VDCServiceLocal {
 
     }
 
-    public List findBasic() {
-        List myList = (List<VDC>) em.createQuery("select object(o) from VDC as o where o.dtype = 'Basic' order by o.name").getResultList();
-        Iterator iterator = myList.iterator();
+    public List<VDC> findBasic() {
         return em.createQuery("select object(o) from VDC as o where o.dtype = 'Basic' order by o.name").getResultList();
     }
 
-    private void create(VDCUser user, String name, String alias, String dtype, List studyFields) {
+    private void create(VDCUser user, String name, String alias, String dtype, List<StudyField> studyFields) {
         VDC addedSite = new VDC();
         addedSite.setCreator(user);
 
@@ -329,12 +328,12 @@ public class VDCServiceBean implements VDCServiceLocal {
         addedSite.setFooter(vdcNetwork.getDefaultVDCFooter());
         addedSite.setRestricted(true);
         addedSite.setDisplayAnnouncements(false);
-        ArrayList advancedSearchFields = new ArrayList();
-        ArrayList searchResultsFields = new ArrayList();
+        ArrayList<StudyField> advancedSearchFields = new ArrayList<StudyField>();
+        ArrayList<StudyField> searchResultsFields = new ArrayList<StudyField>();
    
         
-        for (Iterator it = studyFields.iterator(); it.hasNext();) {
-            StudyField elem = (StudyField) it.next();
+        for (Iterator<StudyField> it = studyFields.iterator(); it.hasNext();) {
+            StudyField elem = it.next();
             if (elem.isAdvancedSearchField()) {
                 advancedSearchFields.add(elem);
             }
@@ -356,7 +355,7 @@ public class VDCServiceBean implements VDCServiceLocal {
         VDC vdc = (VDC) request.getAttribute("vdc");
 
         if (vdc == null) {
-            Iterator iter = request.getParameterMap().keySet().iterator();
+            Iterator<String> iter = request.getParameterMap().keySet().iterator();
             while (iter.hasNext()) {
                 Object key = (Object) iter.next();
                 if (key instanceof String && ((String) key).indexOf("vdcId") != -1) {
@@ -375,7 +374,7 @@ public class VDCServiceBean implements VDCServiceLocal {
     }
 
     public void create(Long userId, String name, String alias, String dtype) {
-        List studyFields = studyFieldService.findAll();
+        List<StudyField> studyFields = studyFieldService.findAll();
         VDCUser user = em.find(VDCUser.class, userId);
         create(user, name, alias, dtype, studyFields);
     }
@@ -394,11 +393,11 @@ public class VDCServiceBean implements VDCServiceLocal {
 
     }
 
-    public List getLinkedCollections(VDC vdc) {
+    public List<VDCCollection> getLinkedCollections(VDC vdc) {
         return getLinkedCollections(vdc, false);
     }
 
-    public List getLinkedCollections(VDC vdc, boolean getHiddenCollections) {
+    public List<VDCCollection> getLinkedCollections(VDC vdc, boolean getHiddenCollections) {
         // getHiddenCollections is no longer used
         return vdc.getLinkedCollections();
     }
@@ -406,12 +405,12 @@ public class VDCServiceBean implements VDCServiceLocal {
     public void delete(Long vdcId) {
         VDC vdc = em.find(VDC.class, vdcId);
         em.refresh(vdc);
-        List studyIds = new ArrayList();
+        List<Long> studyIds = new ArrayList<Long>();
 
         // Get the studyIds separately, to avoid a ConcurrentAccess Exception
         // (This is necessary because the studies are deleted in Native SQL)
-        for (Iterator it = vdc.getOwnedStudies().iterator(); it.hasNext();) {
-            Study elem = (Study) it.next();
+        for (Iterator<Study> it = vdc.getOwnedStudies().iterator(); it.hasNext();) {
+            Study elem = it.next();
             studyIds.add(elem.getId());
         }
 
@@ -424,29 +423,29 @@ public class VDCServiceBean implements VDCServiceLocal {
 
         vdc.setRootCollection(null);
 
-        for (Iterator it = vdc.getOwnedCollections().iterator(); it.hasNext();) {
+        for (Iterator<VDCCollection> it = vdc.getOwnedCollections().iterator(); it.hasNext();) {
             VDCCollection elem = (VDCCollection) it.next();
             elem.setParentCollection(null);
             elem.setOwner(null);
             // Remove this Collection from all linked VDCs
-            for (Iterator itc = elem.getLinkedVDCs().iterator(); itc.hasNext();) {
+            for (Iterator<VDC> itc = elem.getLinkedVDCs().iterator(); itc.hasNext();) {
                 VDC linkedVDC = (VDC) itc.next();
                 linkedVDC.getLinkedCollections().remove(elem);
             }
         }
 
-        for (Iterator it = vdc.getLinkedCollections().iterator(); it.hasNext();) {
+        for (Iterator<VDCCollection> it = vdc.getLinkedCollections().iterator(); it.hasNext();) {
             VDCCollection elem = (VDCCollection) it.next();
             VDCCollection coll = em.find(VDCCollection.class, elem.getId());
             coll.getLinkedVDCs().remove(vdc);
         }
 
-        for (Iterator it = vdc.getVdcGroups().iterator(); it.hasNext();) {
+        for (Iterator<VDCGroup> it = vdc.getVdcGroups().iterator(); it.hasNext();) {
             VDCGroup vdcGroup = (VDCGroup) it.next();
             vdcGroup.getVdcs().remove(vdc);
         }
 
-        for (Iterator it = vdc.getVdcRoles().iterator(); it.hasNext();) {
+        for (Iterator<VDCRole> it = vdc.getVdcRoles().iterator(); it.hasNext();) {
             VDCRole vdcRole = (VDCRole) it.next();
             VDCUser vdcUser = vdcRole.getVdcUser();
             vdcUser.getVdcRoles().remove(vdcRole);
@@ -468,7 +467,7 @@ public class VDCServiceBean implements VDCServiceLocal {
 
     }
 
-    public List findAllNonHarvesting() {
+    public List<VDC> findAllNonHarvesting() {
         return em.createQuery("select object(o) from VDC as o where o.harvestingDataverse is null order by o.name").getResultList();
 
     }
@@ -493,7 +492,7 @@ public class VDCServiceBean implements VDCServiceLocal {
      */
     public List<VDC> findVdcsNotInGroups() {
         String query = "select object(o) FROM VDC as o WHERE o.dtype = 'Scholar' AND o.id NOT IN (SELECT gvdcs.id FROM VDCGroup as groups JOIN groups.vdcs as gvdcs)";
-        return (List) em.createQuery(query).getResultList();
+        return (List<VDC>) em.createQuery(query).getResultList();
 
     }
 
@@ -505,11 +504,11 @@ public class VDCServiceBean implements VDCServiceLocal {
      */
     public List<VDC> findVdcsNotInGroups(String dtype) {
         String query = "select object(o) FROM VDC as o WHERE o.dtype = :fieldName AND o.id NOT IN (SELECT gvdcs.id FROM VDCGroup as groups JOIN groups.vdcs as gvdcs)";
-        return (List) em.createQuery(query).setParameter("fieldName", dtype).getResultList();
+        return (List<VDC>) em.createQuery(query).setParameter("fieldName", dtype).getResultList();
     }
 
 
-    public List getUserVDCs(Long userId) {
+    public List<VDC> getUserVDCs(Long userId) {
         String query = "select v from VDC  v where v.id in (select vr.vdc.id from VDCRole vr where vr.vdcUser.id=" + userId + ") order by upper(v.name)";
         return em.createQuery(query).getResultList();
     }
@@ -526,14 +525,13 @@ public class VDCServiceBean implements VDCServiceLocal {
         vdc.setDefaultTemplate(template);
     }
 
-    public java.util.List<Long> getOwnedStudyIds(Long vdcId) {      
+    public List<Long> getOwnedStudyIds(Long vdcId) {      
         String queryStr = "SELECT s.id FROM VDC v JOIN v.ownedStudies s where v.id = " + vdcId;
         return em.createQuery(queryStr).getResultList();
     }
 
     public Long getOwnedStudyCount(Long vdcId) {
         String queryString = "select count(owner_id) from study  s where s.owner_id = " + vdcId;
-        Long longValue = null;
         Query query = em.createNativeQuery(queryString);
         return (Long) query.getSingleResult();
     }
@@ -542,13 +540,12 @@ public class VDCServiceBean implements VDCServiceLocal {
         String queryString = "select count(owner_id) from study  s, studyversion v "
                 + " where s.id = v.study_id and v.releasetime is not null and " +
                 "s.owner_id = " + vdcId;
-        Long longValue = null;
         Query query = em.createNativeQuery(queryString);
         return (Long) query.getSingleResult();
     }
 
-    public List getPagedData(Long vdcGroupId, int firstRow, int totalRows, String orderBy, String order) {
-        List<VDC> list = new ArrayList();
+    public List<?> getPagedData(Long vdcGroupId, int firstRow, int totalRows, String orderBy, String order) {
+        List<VDC> list = new ArrayList<VDC>();
         try {
             String queryString = (vdcGroupId != 0) ? "SELECT vdc.id, name, alias, affiliation, releasedate, dvndescription, " +
                     "CASE WHEN sum(downloadcount) is null THEN 0 ELSE sum(downloadcount) END, " +
@@ -573,14 +570,13 @@ public class VDCServiceBean implements VDCServiceLocal {
             list = (List<VDC>) query.getResultList();
         } catch (Exception e) {
             //do something here with the exception
-            list = new ArrayList();
-        } finally {
-            return list;
-        }
+            list = new ArrayList<VDC>();
+        } 
+        return list;
     }
 
-    public List getPagedDataByActivity(Long vdcGroupId, int firstRow, int totalRows, String order) {
-        List<VDC> list = new ArrayList();
+    public List<VDC> getPagedDataByActivity(Long vdcGroupId, int firstRow, int totalRows, String order) {
+        List<VDC> list = new ArrayList<VDC>();
         try {
             String queryString = (vdcGroupId != 0) ? "SELECT vdc.id, name, alias, affiliation, releasedate, dvndescription, " +
                     "CASE WHEN sum(downloadcount) is null THEN 0 ELSE sum(downloadcount) END, " +
@@ -610,14 +606,13 @@ public class VDCServiceBean implements VDCServiceLocal {
             list = (List<VDC>) query.getResultList();
         } catch (Exception e) {
             //do something here with the exception
-            list = new ArrayList();
-        } finally {
-            return list;
+            list = new ArrayList<VDC>();
         }
+        return list;
     }
 
-    public List getPagedDataByLastUpdateTime(Long vdcGroupId, int firstRow, int totalRows, String order) {
-        List<VDC> list = new ArrayList();
+    public List<VDC> getPagedDataByLastUpdateTime(Long vdcGroupId, int firstRow, int totalRows, String order) {
+        List<VDC> list = new ArrayList<VDC>();
         try {
             String queryString = (vdcGroupId != 0) ? "SELECT vdc.id, name, alias, affiliation, releasedate, dvndescription, " +
                     "CASE WHEN sum(downloadcount) is null THEN 0 ELSE sum(downloadcount) END, " +
@@ -647,10 +642,9 @@ public class VDCServiceBean implements VDCServiceLocal {
             list = (List<VDC>) query.getResultList();
         } catch (Exception e) {
             //do something here with the exception
-            list = new ArrayList();
-        } finally {
-            return list;
+            list = new ArrayList<VDC>();
         }
+        return list;
     }
 
     /** getManagedPagedDataByOwnedStudies
@@ -663,8 +657,8 @@ public class VDCServiceBean implements VDCServiceLocal {
      * @param order
      * @return list of dataverses ordered by owner
      */
-    public List getManagedPagedDataByOwnedStudies(int firstRow, int totalRows, String order) {
-        List<VDC> list = new ArrayList();
+    public List<VDC> getManagedPagedDataByOwnedStudies(int firstRow, int totalRows, String order) {
+        List<VDC> list = new ArrayList<VDC>();
         try {
             String queryString = "SELECT vdc.id, vdc.name, vdc.alias, vdc.affiliation, vdc.releasedate, " +
                     "vdc.dtype, vdc.createddate, vdc.dvndescription, username, " +
@@ -684,10 +678,9 @@ public class VDCServiceBean implements VDCServiceLocal {
             list = (List<VDC>) query.getResultList();
         } catch (Exception e) {
             //do something here with the exception
-            list = new ArrayList();
-        } finally {
-            return list;
+            list = new ArrayList<VDC>();
         }
+        return list;
     }
 
     /** getManagedPagedDataByActivity
@@ -697,8 +690,8 @@ public class VDCServiceBean implements VDCServiceLocal {
      * @param order
      * @return list of dataverses ordered by activity
      */
-    public List getManagedPagedDataByLastUpdated(int firstRow, int totalRows, String order) {
-        List<VDC> list = new ArrayList();
+    public List<VDC> getManagedPagedDataByLastUpdated(int firstRow, int totalRows, String order) {
+        List<VDC> list = new ArrayList<VDC>();
         try {
             String queryString = "SELECT vdc.id, vdc.name, vdc.alias, vdc.affiliation, vdc.releasedate, " +
                     "vdc.dtype, vdc.createddate, vdc.dvndescription, username, " +
@@ -718,10 +711,9 @@ public class VDCServiceBean implements VDCServiceLocal {
             list = (List<VDC>) query.getResultList();
         } catch (Exception e) {
             //do something here with the exception
-            list = new ArrayList();
-        } finally {
-            return list;
+            list = new ArrayList<VDC>();
         }
+        return list;
     }
 
     /** getManagedPageData
@@ -735,8 +727,8 @@ public class VDCServiceBean implements VDCServiceLocal {
      * @return list of dataverses ordered by creator
      */
 
-     public List getManagedPagedData(int firstRow, int totalRows, String orderBy, String order) {
-        List<VDC> list = new ArrayList();
+     public List<VDC> getManagedPagedData(int firstRow, int totalRows, String orderBy, String order) {
+        List<VDC> list = new ArrayList<VDC>();
         orderBy = (orderBy.toLowerCase().equals("name"))  ? "CASE WHEN dtype='Scholar' THEN Lower(vdc.lastname) ELSE Lower(vdc.name) END" : "Lower(" + orderBy + ")";
         try {
             String queryString = "SELECT vdc.id, " +
@@ -758,17 +750,15 @@ public class VDCServiceBean implements VDCServiceLocal {
             list = (List<VDC>) query.getResultList();
         } catch (Exception e) {
             //do something here with the exception
-            list = new ArrayList();
-        } finally {
-            return list;
+            list = new ArrayList<VDC>();
         }
+        return list;
     }
 //Not used anywhere....
     public Long getUnrestrictedVdcCount(long vdcGroupId) {
         String queryString = (vdcGroupId != 0) ? "SELECT count(vdcgroup_id) FROM vdcgroup_vdcs g " +
                 "WHERE g.vdcgroup_id = " + vdcGroupId +
                 " AND g.vdc_id in (SELECT id FROM vdc WHERE restricted = false)" : "SELECT count(id) FROM vdc v WHERE restricted = false";
-        Long longValue = null;
         Query query = em.createNativeQuery(queryString);
         return (Long) query.getSingleResult();
     }
@@ -800,12 +790,12 @@ public class VDCServiceBean implements VDCServiceLocal {
         em.createNativeQuery(" BEGIN; SET TRANSACTION READ WRITE; INSERT INTO tempid VALUES " + generateIDsforTempInsert(studyIds) + "; END;").executeUpdate();
         return "select tempid from tempid";
     }
-    private String generateIDsforTempInsert(List idList) {
+    private String generateIDsforTempInsert(List<Long> idList) {
         int count = 0;
         StringBuffer sb = new StringBuffer();
-        Iterator iter = idList.iterator();
+        Iterator<Long> iter = idList.iterator();
         while (iter.hasNext()) {
-            Long id = (Long) iter.next();
+            Long id = iter.next();
             sb.append("(").append(id).append(",").append(count++).append(")");
             if (iter.hasNext()) {
                 sb.append(",");
@@ -848,7 +838,7 @@ public class VDCServiceBean implements VDCServiceLocal {
     }
 
     public List<Long> getOrderedVDCIds(Long classificationId, String letter, String orderBy, boolean hideRestrictedVDCs, String filterString, Long subNetworkId) {
-        List<Long> returnList = new ArrayList();
+        List<Long> returnList = new ArrayList<Long>();
 
         // this query will get all vdcids for the dvn or for a classification (and one level of children, per design)
         String selectClause = "select distinct v.id ";
@@ -962,7 +952,7 @@ public class VDCServiceBean implements VDCServiceLocal {
         //
         // So this is how we are doing it now:
         
-        for (Iterator itr = query.getResultList().iterator(); itr.hasNext();) {
+        for (Iterator<Object[]> itr = query.getResultList().iterator(); itr.hasNext();) {
             Object[] nextResult = (Object[])itr.next();
             returnList.add(new Long((Integer)nextResult[0]));
         }

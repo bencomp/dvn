@@ -28,7 +28,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface StudyFieldServiceLocal extends java.io.Serializable {
-    public List findAll();
+    public List<StudyField> findAll();
     public StudyField findByName(String name);
     public StudyField findById(Long id);    
     public List findAdvSearchDefault();

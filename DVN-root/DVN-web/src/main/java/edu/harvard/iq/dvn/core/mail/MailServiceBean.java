@@ -27,7 +27,6 @@
  */
 package edu.harvard.iq.dvn.core.mail;
 
-import edu.harvard.iq.dvn.core.study.StudyFile;
 import edu.harvard.iq.dvn.core.study.StudyFileEditBean;
 import edu.harvard.iq.dvn.core.study.StudyServiceLocal;
 import edu.harvard.iq.dvn.core.vdc.VDC;
@@ -35,6 +34,7 @@ import edu.harvard.iq.dvn.core.vdc.VDCNetworkServiceLocal;
 import edu.harvard.iq.dvn.ingest.dsb.DSBIngestMessage;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Map;
 import java.util.HashMap;
@@ -66,6 +66,7 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
     public MailServiceBean() {
     }
 
+    @Override
     public void sendMail(String host, String from, String to, String subject, String messageText) {
         Properties props = System.getProperties(  );
         props.put("mail.smtp.host", host);
@@ -107,10 +108,10 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
     
 //    @Resource(name="mail/notifyMailSession")
     public void sendMail(String from, String to, String subject, String messageText){
-        sendMail(from, to, subject, messageText, new HashMap());
+        sendMail(from, to, subject, messageText, new HashMap<String, String>());
     }
     
-    public void sendMail(String from, String to, String subject, String messageText, Map extraHeaders) {
+    public void sendMail(String from, String to, String subject, String messageText, Map<String, String> extraHeaders) {
         try {
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(from));
@@ -120,7 +121,7 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
             msg.setText(messageText);
             
             if (extraHeaders != null) {
-                for (Object key : extraHeaders.keySet()) {
+                for (Entry<String, String> key : extraHeaders.entrySet()) {
                     String headerName = key.toString();
                     String headerValue = extraHeaders.get(key).toString();
                     
@@ -173,12 +174,12 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
         return messagePrefix;
     }
    
-    public void sendIngestRequestedNotification(DSBIngestMessage ingestMessage, List subsettableFiles) {
+    public void sendIngestRequestedNotification(DSBIngestMessage ingestMessage, List<StudyFileEditBean> subsettableFiles) {
         String msgSubject = "Dataverse Network: The upload of your subsettable file(s) is in progress";
         String msgText = getIngestMessagePrefix(ingestMessage);
         
         msgText += "\nYou have requested the following subsettable files to be uploaded: \n";
-        Iterator iter = subsettableFiles.iterator();
+        Iterator<StudyFileEditBean> iter = subsettableFiles.iterator();
         while (iter.hasNext()) {
             StudyFileEditBean fileBean = (StudyFileEditBean) iter.next();
             msgText += "  " + fileBean.getFileMetadata().getLabel() + "\n";
@@ -187,14 +188,14 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
         sendDoNotReplyMail(ingestMessage.getIngestEmail(), msgSubject, msgText );
     }
     
-    public void sendIngestCompletedNotification(DSBIngestMessage ingestMessage, List successfulFiles, List problemFiles) {
+    public void sendIngestCompletedNotification(DSBIngestMessage ingestMessage, List<StudyFileEditBean> successfulFiles, List<StudyFileEditBean> problemFiles) {
         String msgSubject = "Dataverse Network: Upload request complete";
         String msgText = getIngestMessagePrefix( ingestMessage );      
         
         msgText += "\nYour upload request has completed.\n";
          if (successfulFiles != null && successfulFiles.size() != 0) {               
             msgText +=  "\nThe following subsettable files were successfully uploaded: \n";
-            Iterator iter = successfulFiles.iterator();
+            Iterator<StudyFileEditBean> iter = successfulFiles.iterator();
             while (iter.hasNext()) {
                 StudyFileEditBean fileBean = (StudyFileEditBean) iter.next();
                 msgText += "  " + fileBean.getFileMetadata().getLabel() +"\n";
@@ -205,7 +206,7 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
             msgSubject += " (with failures)";
             
             msgText += "\nThe following subsettable files failed to upload: \n";
-            Iterator iter = problemFiles.iterator();
+            Iterator<StudyFileEditBean> iter = problemFiles.iterator();
             while (iter.hasNext()) {
                 StudyFileEditBean fileBean = (StudyFileEditBean) iter.next();
                 msgText += "  " + fileBean.getFileMetadata().getLabel() +" (File Type: " + fileBean.getStudyFile().getFileType() + "; File Size: " + fileBean.getSizeFormatted() +")\n";
@@ -450,7 +451,7 @@ public class MailServiceBean implements edu.harvard.iq.dvn.core.mail.MailService
           if (failedIdentifiers.size()>0) {
                 sendMail = true;
                 messageText+= "Harvest failed for the following identifiers - \n";
-                Iterator iter = failedIdentifiers.iterator();
+                Iterator<String> iter = failedIdentifiers.iterator();
                 while (iter.hasNext()) {
                     messageText += "  "+(String)iter.next() +"\n"; 
                 }                 
