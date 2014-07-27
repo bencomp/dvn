@@ -71,10 +71,10 @@ public class ErrorPage extends VDCBaseBean implements java.io.Serializable  {
         }
     }
     
-    public List getMessages() {
-        List msgs = new ArrayList();
+    public List<String> getMessages() {
+        List<String> msgs = new ArrayList<String>();
         FacesContext context = FacesContext.getCurrentInstance();
-        for (Iterator it = context.getMessages(); it.hasNext();) {
+        for (Iterator<FacesMessage> it = context.getMessages(); it.hasNext();) {
             FacesMessage elem = (FacesMessage) it.next();
             msgs.add(elem.getSummary());
         }

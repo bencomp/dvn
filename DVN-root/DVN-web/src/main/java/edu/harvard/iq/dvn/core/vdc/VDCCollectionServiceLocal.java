@@ -45,11 +45,11 @@ public interface VDCCollectionServiceLocal extends java.io.Serializable  {
 
     VDCCollection find(Object pk);
 
-    List findAll();
+    List<VDCCollection> findAll();
     
-    public List findSubCollections(Long id);
+    public List<VDCCollection> findSubCollections(Long id);
 
-    java.util.List findSubCollections(Long id, boolean getAllCollections);
+    List<VDCCollection> findSubCollections(Long id, boolean getAllCollections);
 
 
     public VDCCollection findByNameWithinDataverse(String name, VDC dataverse);

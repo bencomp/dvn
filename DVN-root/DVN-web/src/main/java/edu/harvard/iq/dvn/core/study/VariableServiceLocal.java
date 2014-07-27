@@ -39,7 +39,7 @@ public interface VariableServiceLocal extends java.io.Serializable {
 
     edu.harvard.iq.dvn.core.study.DataVariable getDataVariable(Long dvId);
 
-    void determineStudiesFromVariables(List variables, List studies, Map variableMap);
+    void determineStudiesFromVariables(List<Long> variables, List<Long> studies, Map<Long, List<DataVariable>> variableMap);
 
     edu.harvard.iq.dvn.core.study.VariableRangeType findVariableRangeTypeByName(String name);
 

@@ -622,7 +622,7 @@ public class FileDownloadServlet extends HttpServlet {
             file.getFileType().equals("text/tab-separated-values")  &&
             file.isSubsettable() && (!localDownload.noVarHeader())) {
 
-            List datavariables = ((TabularDataFile) file).getDataTable().getDataVariables();
+            List<?> datavariables = ((TabularDataFile) file).getDataTable().getDataVariables();
             String varHeaderLine = generateVariableHeader(datavariables);
             localDownload.setVarHeader(varHeaderLine);
         }
@@ -636,7 +636,7 @@ public class FileDownloadServlet extends HttpServlet {
 
 
     private void setDownloadContentHeaders (FileDownloadObject fileDownloadObject) {
-        List<Header> headerList = new ArrayList();
+        List<Header> headerList = new ArrayList<Header>();
         Header contentHeader = null;
         int headerCounter = 0;
 
@@ -1498,7 +1498,7 @@ public class FileDownloadServlet extends HttpServlet {
             if (formatRequested.equals("D00") && (!fileDownload.noVarHeader())) {
 
                 String varHeaderLine = null;
-                List dataVariablesList = ((TabularDataFile) file).getDataTable().getDataVariables();
+                List<?> dataVariablesList = ((TabularDataFile) file).getDataTable().getDataVariables();
                 varHeaderLine = generateVariableHeader(dataVariablesList);
                 fileDownload.setVarHeader(varHeaderLine);
             } else {
@@ -1668,11 +1668,11 @@ public class FileDownloadServlet extends HttpServlet {
     // private methods for generating parameters for the DSB 
     // conversion call;
 
-    public String generateVariableHeader(List dvs) {
+    public String generateVariableHeader(List<?> dvs) {
         String varHeader = null;
 
         if (dvs != null) {
-            Iterator iter = dvs.iterator();
+            Iterator<?> iter = dvs.iterator();
             DataVariable dv;
 
             if (iter.hasNext()) {
@@ -1845,7 +1845,7 @@ public class FileDownloadServlet extends HttpServlet {
 	    java.awt.Image thumbImage = fullSizeImage.getScaledInstance(thumbSize.intValue(), thumbHeight, java.awt.Image.SCALE_SMOOTH);
 
             ImageWriter writer = null;
-            Iterator iter = ImageIO.getImageWritersByFormatName("png");
+            Iterator<?> iter = ImageIO.getImageWritersByFormatName("png");
             if (iter.hasNext()) {
                 writer = (ImageWriter) iter.next();
             } else {
@@ -1899,7 +1899,7 @@ public class FileDownloadServlet extends HttpServlet {
         return altFileName;
     }
 
-    private String checkZipEntryName(String originalName, List nameList) {
+    private String checkZipEntryName(String originalName, List<String> nameList) {
         String name = originalName;
         int fileSuffix = 1;
         int extensionIndex = originalName.lastIndexOf(".");
@@ -1927,7 +1927,7 @@ public class FileDownloadServlet extends HttpServlet {
         String versionNumber = req.getParameter("versionNumber");
         System.out.print("zip multiple files version number" + versionNumber);
         Study study = null;
-        Collection files = new ArrayList();
+        Collection<StudyFile> files = new ArrayList<StudyFile>();
         boolean createDirectoriesForCategories = false;
 
         String fileManifest = "";
@@ -1977,7 +1977,7 @@ public class FileDownloadServlet extends HttpServlet {
         }
 
         // check for restricted files
-        Iterator iter = files.iterator();
+        Iterator<StudyFile> iter = files.iterator();
         while (iter.hasNext()) {
             StudyFile file = (StudyFile) iter.next();
             if (file.isFileRestrictedForUser(user, ipUserGroup)) {
@@ -2023,8 +2023,8 @@ public class FileDownloadServlet extends HttpServlet {
             OutputStream out = res.getOutputStream();
             ZipOutputStream zout = new ZipOutputStream(out);
 
-            List nameList = new ArrayList(); // used to check for duplicates
-            List successList = new ArrayList();
+            List<String> nameList = new ArrayList<String>(); // used to check for duplicates
+            List<Long> successList = new ArrayList<Long>();
 
             iter = files.iterator();
 
@@ -2039,7 +2039,7 @@ public class FileDownloadServlet extends HttpServlet {
                     String dbContentType = file.getFileType();
 
                     if (dbContentType != null && dbContentType.equals("text/tab-separated-values") && file.isSubsettable()) {
-                        List datavariables = ((TabularDataFile) file).getDataTable().getDataVariables();
+                        List<?> datavariables = ((TabularDataFile) file).getDataTable().getDataVariables();
                         varHeaderLine = generateVariableHeader(datavariables);
                     }
 
@@ -2153,7 +2153,7 @@ public class FileDownloadServlet extends HttpServlet {
             // and finally finally, we can now increment the download
             // counts on all the files successfully zipped:
 
-            Iterator it = successList.iterator();
+            Iterator<Long> it = successList.iterator();
             while (it.hasNext()) {
                 Long fid = (Long) it.next();
                 StudyFile file = studyFileService.getStudyFile(new Long(fid));
@@ -2451,7 +2451,7 @@ public class FileDownloadServlet extends HttpServlet {
      */
     public List<DataVariable> getDataVariableForRequest() {
         List<DataVariable> dvs = new ArrayList<DataVariable>();
-        for (Iterator el = dataVariables.iterator(); el.hasNext();) {
+        for (Iterator<DataVariable> el = dataVariables.iterator(); el.hasNext();) {
             DataVariable dv = (DataVariable) el.next();
             String keyS = dv.getId().toString();
             //if (varCart.containsKey(keyS)) {

@@ -99,7 +99,7 @@ public class StudyFieldServiceBean implements StudyFieldServiceLocal, java.io.Se
          */
     }
     
-    public List findAvailableFileMetadataFields() {
+    public List<FileMetadataField> findAvailableFileMetadataFields() {
         List <FileMetadataField> fileMetadataFields = null; 
         fileMetadataFields = (List <FileMetadataField>) em.createQuery("SELECT fmf from FileMetadataField fmf ORDER by fmf.id").getResultList();
         

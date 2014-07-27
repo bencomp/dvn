@@ -74,7 +74,7 @@ public class EditStudyServiceBean implements edu.harvard.iq.dvn.core.study.EditS
     @Resource(mappedName="jms/DSBQueueConnectionFactory") QueueConnectionFactory factory;
     StudyVersion studyVersion;
     private boolean newStudy=false;
-    private List currentFiles = new ArrayList();
+    private List<StudyFileEditBean> currentFiles = new ArrayList<StudyFileEditBean>();
     private List newFiles = new ArrayList();
     private String ingestEmail;
     
@@ -301,9 +301,9 @@ public class EditStudyServiceBean implements edu.harvard.iq.dvn.core.study.EditS
     
     private void editFiles() {
         boolean recalculateStudyUNF = false;
-        List filesToBeDeleted = new ArrayList();
+        List<StudyFile> filesToBeDeleted = new ArrayList<StudyFile>();
         
-        Iterator iter = currentFiles.iterator();
+        Iterator<StudyFileEditBean> iter = currentFiles.iterator();
         while (iter.hasNext()) {
             StudyFileEditBean fileBean = (StudyFileEditBean) iter.next();
             StudyFile f = em.find(StudyFile.class,fileBean.getStudyFile().getId());
@@ -377,7 +377,7 @@ public class EditStudyServiceBean implements edu.harvard.iq.dvn.core.study.EditS
     public EditStudyServiceBean() {
     }
     
-    public List getCurrentFiles() {
+    public List<StudyFileEditBean> getCurrentFiles() {
         return currentFiles;
     }
     

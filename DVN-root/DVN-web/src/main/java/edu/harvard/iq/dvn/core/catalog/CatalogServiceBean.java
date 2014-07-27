@@ -129,7 +129,7 @@ public class CatalogServiceBean implements CatalogServiceLocal {
     }
     
     public Study [] listStudies(String from, String until, String set, String metadataPrefix){
-        List <Study> studies = new ArrayList();
+        List <Study> studies = new ArrayList<Study>();
         try{
             String beginTime=null;
             String endTime=null;
@@ -157,10 +157,10 @@ public class CatalogServiceBean implements CatalogServiceLocal {
             query+="s.lastUpdateTime >='" +beginTime+"'";
             query+=" and s.lastUpdateTime <='" +endTime+"'";
             query+=" order by s.studyId";
-            List updatedStudies = em.createQuery(query).getResultList();
+            List<Study> updatedStudies = em.createQuery(query).getResultList();
             
             
-            for (Iterator it = updatedStudies.iterator(); it.hasNext();) {
+            for (Iterator<Study> it = updatedStudies.iterator(); it.hasNext();) {
                 Study study = (Study) it.next();
                 logger.info("Exporting study "+study.getStudyId());
                 studies.add(study);
@@ -189,7 +189,7 @@ public class CatalogServiceBean implements CatalogServiceLocal {
         DateFormat gmtFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         TimeZone gmtTime = TimeZone.getTimeZone("GMT");
         gmtFormat.setTimeZone(gmtTime);
-        List <String> records = new ArrayList();
+        List <String> records = new ArrayList<String>();
         
         try {
             List<HarvestStudy> harvestStudies = harvestStudyService.findHarvestStudiesBySetName(set, gmtFormat.parse(from), gmtFormat.parse(until) );

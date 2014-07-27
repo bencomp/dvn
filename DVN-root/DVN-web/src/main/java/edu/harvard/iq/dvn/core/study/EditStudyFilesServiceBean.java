@@ -62,7 +62,7 @@ public class EditStudyFilesServiceBean implements edu.harvard.iq.dvn.core.study.
     EntityManager em;
     StudyVersion studyVersion;
     private boolean newStudy=false;
-    private List currentFiles = new ArrayList();
+    private List<StudyFileEditBean> currentFiles = new ArrayList<StudyFileEditBean>();
     private List newFiles = new ArrayList();
 
     public void setStudyVersion(Long studyId ) {
@@ -142,11 +142,11 @@ public class EditStudyFilesServiceBean implements edu.harvard.iq.dvn.core.study.
          return studyVersion;
     }
 
-    public List getCurrentFiles(){
+    public List<StudyFileEditBean> getCurrentFiles(){
         return currentFiles;
     }
 
-    public void setCurrentFiles(List currentFiles){
+    public void setCurrentFiles(List<StudyFileEditBean> currentFiles){
          this.currentFiles = currentFiles;
     }
 
@@ -179,9 +179,9 @@ public class EditStudyFilesServiceBean implements edu.harvard.iq.dvn.core.study.
 
     private void editFiles() {
         boolean recalculateStudyUNF = false;
-        List filesToBeDeleted = new ArrayList();
+        List<StudyFile> filesToBeDeleted = new ArrayList<StudyFile>();
         em.flush();
-        Iterator iter = currentFiles.iterator();
+        Iterator<StudyFileEditBean> iter = currentFiles.iterator();
         while (iter.hasNext()) {
             StudyFileEditBean fileBean = (StudyFileEditBean) iter.next();
             StudyFile f = em.find(StudyFile.class,fileBean.getStudyFile().getId());
@@ -212,7 +212,7 @@ public class EditStudyFilesServiceBean implements edu.harvard.iq.dvn.core.study.
         }
 
         // finally delete the physical files
-        Iterator tbdIter = filesToBeDeleted.iterator();
+        Iterator<StudyFile> tbdIter = filesToBeDeleted.iterator();
         while (tbdIter.hasNext()) {
             StudyFile f = (StudyFile) tbdIter.next();
             File physicalFile = new File(f.getFileSystemLocation());

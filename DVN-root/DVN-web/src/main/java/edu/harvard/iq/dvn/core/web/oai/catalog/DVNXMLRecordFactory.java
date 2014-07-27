@@ -116,9 +116,9 @@ public class DVNXMLRecordFactory extends RecordFactory implements java.io.Serial
      * @return a String containing the setspec for the item
      * @exception IllegalArgumentException Something is wrong with the argument.
      */
-    public Iterator getSetSpecs(Object nativeItem)
+    public Iterator<String> getSetSpecs(Object nativeItem)
 	throws IllegalArgumentException  {
-	ArrayList list = new ArrayList();
+	ArrayList<String> list = new ArrayList<String>();
 	String xmlRec = (String)nativeItem;
 	for (int startOffset = xmlRec.indexOf(setSpecStart);
 	     startOffset >= 0;
@@ -136,8 +136,8 @@ public class DVNXMLRecordFactory extends RecordFactory implements java.io.Serial
      * @return a Iterator of Strings containing &lt;about&gt;s for the item
      * @exception IllegalArgumentException Something is wrong with the argument.
      */
-    public Iterator getAbouts(Object nativeItem) throws IllegalArgumentException {
-	ArrayList list = new ArrayList();
+    public Iterator<String> getAbouts(Object nativeItem) throws IllegalArgumentException {
+	ArrayList<String> list = new ArrayList<String>();
 	String xmlRec = (String)nativeItem;
 	for (int startOffset = xmlRec.indexOf(aboutStart);
 	     startOffset >= 0;

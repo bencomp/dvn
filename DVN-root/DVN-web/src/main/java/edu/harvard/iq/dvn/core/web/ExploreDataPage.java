@@ -24,6 +24,7 @@
 package edu.harvard.iq.dvn.core.web;
 
 import edu.harvard.iq.dvn.core.study.DataTable;
+import edu.harvard.iq.dvn.core.study.DataVariable;
 import edu.harvard.iq.dvn.core.visualization.VarGroup;
 import edu.harvard.iq.dvn.core.visualization.VarGroupType;
 import edu.harvard.iq.dvn.core.visualization.VarGrouping;
@@ -34,6 +35,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import javax.ejb.EJB;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -136,19 +139,19 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     private String lineColor;
     private String dataTableId = "";
     
-    private List <VarGrouping> varGroupings = new ArrayList();
-    private List <VarGroupingUI> filterGroupings = new ArrayList();
-    private Map filterGroupingsAndFilters = new LinkedHashMap();
+    private List <VarGrouping> varGroupings = new ArrayList<VarGrouping>();
+    private List <VarGroupingUI> filterGroupings = new ArrayList<VarGroupingUI>();
+    private Map<Long, Map<String, Long>> filterGroupingsAndFilters = new LinkedHashMap<Long, Map<String, Long>>();
 
-    private List <String> filterStrings = new ArrayList();
-    private List <SelectItem> selectMeasureItems = new ArrayList();
-    private List <SelectItem> selectMeasureGroupTypes = new ArrayList();
-    private List <SelectItem> selectBeginYears = new ArrayList();
-    private List <SelectItem> selectIndexDate = new ArrayList();
+    private List <String> filterStrings = new ArrayList<String>();
+    private List <SelectItem> selectMeasureItems = new ArrayList<SelectItem>();
+    private List <SelectItem> selectMeasureGroupTypes = new ArrayList<SelectItem>();
+    private List <SelectItem> selectBeginYears = new ArrayList<SelectItem>();
+    private List <SelectItem> selectIndexDate = new ArrayList<SelectItem>();
 
-    private List <SelectItem> selectEndYears = new ArrayList();    
-    private List <SelectItem> selectView = new ArrayList();
-    private List <VisualizationLineDefinition> vizLines = new ArrayList();
+    private List <SelectItem> selectEndYears = new ArrayList<SelectItem>();    
+    private List <SelectItem> selectView = new ArrayList<SelectItem>();
+    private List <VisualizationLineDefinition> vizLines = new ArrayList<VisualizationLineDefinition>();
 
     private Long selectedMeasureId = new Long(0);
     private boolean selectedMeasureHasFilterTypes = false;
@@ -158,8 +161,8 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     private Integer selectedIndex = new Integer(0);
     private int groupTypeId = 0;
     private List <DataVariable> dvList;
-    private List <DataVariableMapping> sourceList = new ArrayList();;
-    private List <String> measureString= new ArrayList();
+    private List <DataVariableMapping> sourceList = new ArrayList<DataVariableMapping>();;
+    private List <String> measureString= new ArrayList<String>();
     private DataVariable xAxisVar;
     private DataTable dt = new DataTable();
     private DataVariable dataVariableSelected = new DataVariable();
@@ -168,8 +171,8 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     private String csvColumnString = new String();
     private String imageColumnString = new String();
     
-    private List <VarGroup> allMeasureGroups = new ArrayList();
-    private List <VarGroup> allFilterGroups = new ArrayList();
+    private List <VarGroup> allMeasureGroups = new ArrayList<VarGroup>();
+    private List <VarGroup> allFilterGroups = new ArrayList<VarGroup>();
 
     private Long numberOfColumns =  new Long(0);
     private String dataString = "";
@@ -208,10 +211,10 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     private Long studyId = new Long(0);
     private Long versionNumber;
     private VDC vdc = null;
-    private List filterGroupingMeasureAssociation = new ArrayList();
-    private List groupingTypeAssociation = new ArrayList();
-    private List filterGroupMeasureAssociation = new ArrayList();
-    private List <VarGrouping> allVarGroupings = new ArrayList();
+    private List<Serializable> filterGroupingMeasureAssociation = new ArrayList<Serializable>();
+    private List<Serializable> groupingTypeAssociation = new ArrayList<Serializable>();
+    private List<Comparable> filterGroupMeasureAssociation = new ArrayList<Comparable>();
+    private List <VarGrouping> allVarGroupings = new ArrayList<VarGrouping>();
     private boolean showVariableInfoPopup = false;
     private String variableLabel = "";
     private boolean variableLabelLink = false;
@@ -339,11 +342,11 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     }
 
 
-    public List getVarGroupings() {
+    public List<VarGrouping> getVarGroupings() {
         return varGroupings;
     }
 
-    public void setVarGroupings(List varGroupings) {
+    public void setVarGroupings(List<VarGrouping> varGroupings) {
         this.varGroupings = varGroupings;
     }
 
@@ -376,9 +379,9 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     private void loadFilterGroupings() {
         filterStrings.clear();
         filterGroupings.clear();
-        filterGroupingsAndFilters = new HashMap();
-        List<VarGrouping> localVGList = new ArrayList();
-        Iterator i = filterGroupingMeasureAssociation.listIterator();
+        filterGroupingsAndFilters = new HashMap<Long, Map<String, Long>>();
+        List<VarGrouping> localVGList = new ArrayList<VarGrouping>();
+        Iterator<Serializable> i = filterGroupingMeasureAssociation.listIterator();
         int count = 0;
         //need iterator here because we are dealing with objects of varying types and 
         // we need to jump ahead wheh the id is eqaul to the selected measure id
@@ -395,8 +398,8 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         }
         for (VarGrouping varGrouping : localVGList) {
             if (varGrouping.getGroupingType().equals(GroupingType.FILTER)) {
-                List<VarGroup> filterGroups = new ArrayList();
-                List<VarGroupTypeUI> filterGroupTypes = new ArrayList();
+                List<VarGroup> filterGroups = new ArrayList<VarGroup>();
+                List<VarGroupTypeUI> filterGroupTypes = new ArrayList<VarGroupTypeUI>();
                 VarGroupingUI vgUI = new VarGroupingUI();
                 vgUI.setVarGrouping(varGrouping);
                 loadFilterGroups(filterGroups);
@@ -411,7 +414,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
             }
         }       
         for (VarGrouping varGrouping : localVGList) {
-            Map filterGroupingFilterMap = getFilterGroupsMap(varGrouping.getId());
+            Map<String, Long> filterGroupingFilterMap = getFilterGroupsMap(varGrouping.getId());
             filterGroupingsAndFilters.put(varGrouping.getId(), filterGroupingFilterMap);
         }
     }
@@ -473,8 +476,8 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
 
     private void loadFilterGroups(List<VarGroup> inList) {
         inList.clear();
-        List<VarGroup> localVGList = new ArrayList();
-        Iterator i = filterGroupMeasureAssociation.listIterator();
+        List<VarGroup> localVGList = new ArrayList<VarGroup>();
+        Iterator<Comparable> i = filterGroupMeasureAssociation.listIterator();
         int count = 0;
         while (i.hasNext()) {
             Object test = i.next();
@@ -494,9 +497,9 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
 
     private List<VarGroup> getFilterGroupsFromMeasureId(Long MeasureId) {
 
-        List returnList = new ArrayList();
-        List<VarGroup> localVGList = new ArrayList();
-        Iterator i = filterGroupMeasureAssociation.listIterator();
+        List<VarGroup> returnList = new ArrayList<VarGroup>();
+        List<VarGroup> localVGList = new ArrayList<VarGroup>();
+        Iterator<Comparable> i = filterGroupMeasureAssociation.listIterator();
         int count = 0;
         while (i.hasNext()) {
             Object test = i.next();
@@ -519,8 +522,8 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
 
     private void loadFilterGroupTypes(List <VarGroupTypeUI> inList, Long groupingId){
         
-        List <VarGroupType> localVGList = new ArrayList();
-        Iterator i = groupingTypeAssociation.listIterator();
+        List <VarGroupType> localVGList = new ArrayList<VarGroupType>();
+        Iterator<Serializable> i = groupingTypeAssociation.listIterator();
         int count = 0;
         while (i.hasNext()){
             Object test = i.next();
@@ -535,7 +538,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         }
         
         List <VarGroup> varGroupsAll = (List<VarGroup>)  getFilterGroupsFromMeasureId(selectedMeasureId);
-            List <VarGroupType> varGroupTypesAll = new ArrayList();
+            List <VarGroupType> varGroupTypesAll = new ArrayList<VarGroupType>();
             for (VarGroup varGroupFilter:varGroupsAll){
                 for (VarGroupType vgt: varGroupFilter.getGroupTypes()){
                     varGroupTypesAll.add(vgt);
@@ -642,7 +645,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
                 boolean updateFilterList = false;
                 for (VarGroupingUI varGroupingUI : filterGroupings) {
                     if (updateFilterList){
-                        Map filterGroupingFilterMap = getFilterGroupsMap(varGroupingUI.getVarGrouping().getId(), filterId);
+                        Map<String, Long> filterGroupingFilterMap = getFilterGroupsMap(varGroupingUI.getVarGrouping().getId(), filterId);
                         filterGroupingsAndFilters.remove(varGroupingUI.getVarGrouping().getId());
                         if (!filterGroupingFilterMap.isEmpty()) {
                             filterGroupingsAndFilters.put(varGroupingUI.getVarGrouping().getId(), filterGroupingFilterMap);
@@ -687,8 +690,8 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     }
     
     private List<SelectItem> loadSelectMeasureItems(int grouptype_id) {
-        List selectItems = new ArrayList<SelectItem>();
-        List<VarGroup> varGroups = new ArrayList();
+        List<SelectItem> selectItems = new ArrayList<SelectItem>();
+        List<VarGroup> varGroups = new ArrayList<VarGroup>();
         varGroupings = dt.getVarGroupings();
         for (VarGrouping varGrouping : varGroupings) {
             if (varGrouping.getGroupingType().equals(GroupingType.MEASURE)) {
@@ -733,7 +736,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         boolean flash = false;
         boolean datatable = false;
 
-        List selectItems = new ArrayList<SelectItem>();
+        List<SelectItem> selectItems = new ArrayList<SelectItem>();
         int defaultViewDisplay = dt.getVisualizationDisplay().getDefaultDisplay();
         
         if (vizLines.size() > 8){
@@ -791,7 +794,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     }
     
     private List<SelectItem> loadSelectMeasureGroupTypes() {
-        List selectItems = new ArrayList<SelectItem>();
+        List<SelectItem> selectItems = new ArrayList<SelectItem>();
         for(VarGrouping varGrouping: allVarGroupings) {           
             if (varGrouping.getGroupingType().equals(GroupingType.MEASURE)){
                 List <VarGroupType> varGroupTypes = (List<VarGroupType>) varGrouping.getVarGroupTypes();
@@ -805,19 +808,19 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         return selectItems;
     }
     
-    public Map getSelectFilterGroups(Long groupingId) {
+    public Map<?, ?> getSelectFilterGroups(Long groupingId) {
         if (!selectedMeasureId.equals(new Long(0))){         
-            return (Map) filterGroupingsAndFilters.get(groupingId);  //getFilterGroupsWithMeasureMap(groupingId);
+            return (Map<?, ?>) filterGroupingsAndFilters.get(groupingId);  //getFilterGroupsWithMeasureMap(groupingId);
         }
         return null;
     }
 
     public List<SelectItem> getSelectFilterGroupTypes(Long groupingId) {
         showFilterGroupTypes = false;
-        List selectItems = new ArrayList<SelectItem>();
+        List<SelectItem> selectItems = new ArrayList<SelectItem>();
         if (!selectedMeasureId.equals(new Long(0))) {
             List<VarGroup> varGroupsAll = (List<VarGroup>) getFilterGroupsFromMeasureId(selectedMeasureId);
-            List<VarGroupType> varGroupTypesAll = new ArrayList();
+            List<VarGroupType> varGroupTypesAll = new ArrayList<VarGroupType>();
             for (VarGroup varGroupFilter : varGroupsAll) {
                 for (VarGroupType vgt : varGroupFilter.getGroupTypes()) {
                     varGroupTypesAll.add(vgt);
@@ -834,12 +837,12 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         return selectItems;
     }
     
-    public Map getFilterGroupsMap(Long groupingId) {    
+    public Map<String, Long> getFilterGroupsMap(Long groupingId) {    
         return getFilterGroupsMap(groupingId, null);
     }
 
-    public Map getFilterGroupsMap(Long groupingId, Long selectedFilterId) {
-        Map filterMap = new LinkedHashMap();
+    public Map<String, Long> getFilterGroupsMap(Long groupingId, Long selectedFilterId) {
+        Map<String, Long> filterMap = new LinkedHashMap<String, Long>();
         List<VarGroup> varGroupsAll = (List<VarGroup>) getFilterGroupsFromMeasureId(selectedMeasureId);
         for (VarGroup varGroup : varGroupsAll) {
             //Have to make sure that the filters are  congruent with selected types
@@ -870,7 +873,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
                             //if enabled == 1 then add if matches
                             for (VarGroupTypeUI varGroupTypeUI : varGroupTypesUI) {
                                 if (varGroupTypeUI.isEnabled()) {
-                                    List<VarGroup> varGroups = (List) varGroupTypeUI.getVarGroupType().getGroups();
+                                    List<VarGroup> varGroups = (List<VarGroup>) varGroupTypeUI.getVarGroupType().getGroups();
                                     for (VarGroup varGroupTest : varGroups) {
                                         if (varGroupTest.getId().equals(varGroup.getId())
                                                 && varGroup.getGroupAssociation().equals(varGroupingUI.getVarGrouping())
@@ -893,8 +896,8 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         if (selectedFilterId != null){
             List<DataVariable> measureDvs = getDVMappingsFromGroup(selectedMeasureId);
             List<DataVariable> filterDvs = getDVMappingsFromGroup(selectedFilterId);
-            List intersection = getDVMappingsIntersection(measureDvs, filterDvs);           
-            List <Long> idsForFinalMap = new ArrayList();
+            List<DataVariable> intersection = getDVMappingsIntersection(measureDvs, filterDvs);           
+            List <Long> idsForFinalMap = new ArrayList<Long>();
             for (Object value : filterMap.values()) {
                 List<DataVariable> testDvs = getDVMappingsFromGroup((Long) value);
                 if(!getDVMappingsIntersection(testDvs, intersection).isEmpty()){
@@ -913,7 +916,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     }
     
     private List<DataVariable> getDVMappingsFromGroup(Long groupId){
-        List<DataVariable> resultList = new ArrayList();
+        List<DataVariable> resultList = new ArrayList<DataVariable>();
         for (DataVariable dv : dvList){
             Collection<DataVariableMapping> dvMappings = dv.getDataVariableMappings();
             for (DataVariableMapping dvMapping : dvMappings) {
@@ -926,7 +929,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     }
     
     private List <DataVariable> getDVMappingsIntersection(List<DataVariable> list1, List<DataVariable> list2){
-        List <DataVariable> dataVariableList = new ArrayList();
+        List <DataVariable> dataVariableList = new ArrayList<DataVariable>();
         for (DataVariable dv1 : list1){
             for (DataVariable dv2 : list2){
                 if (dv1.getId().equals(dv2.getId())){
@@ -1000,7 +1003,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     }
     
     private void disableIneligibleYears(){
-        List <SelectItem> selectEndYearsTest = new ArrayList();
+        List <SelectItem> selectEndYearsTest = new ArrayList<SelectItem>();
         for (SelectItem present: selectEndYears){
             selectEndYearsTest.add(present);
         }        
@@ -1015,7 +1018,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
             present.setDisabled(disabled);
             selectEndYears.add(present);
         }
-        List <SelectItem> selectBeginYearsTest = new ArrayList();        
+        List <SelectItem> selectBeginYearsTest = new ArrayList<SelectItem>();        
         for (SelectItem present: selectBeginYears){
             selectBeginYearsTest.add(present);
         }        
@@ -1087,7 +1090,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     
     private void updateGraphTitleForMeasure() {
         String tmpLineLabel = "";
-        Set<String> set = new HashSet();
+        Set<String> set = new HashSet<String>();
         for (VisualizationLineDefinition vld : vizLines) {
             String checkName = vld.getMeasureGroup().getName();
             if (!checkName.isEmpty()) {
@@ -1159,7 +1162,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
 
             vizLine.setMeasureGroup(visualizationService.getGroupFromId(selectedMeasureId));
 
-            List<VarGroup> selectedFilterGroups = new ArrayList();
+            List<VarGroup> selectedFilterGroups = new ArrayList<VarGroup>();
             for (VarGroupingUI varGrouping : filterGroupings) {
                 if (!(varGrouping.getSelectedGroupId() == 0)) {
                     for (VarGroup filterGroup : allFilterGroups) {
@@ -1222,9 +1225,9 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     
     private void deleteLatestLine() {
 
-        List<VisualizationLineDefinition> removeList = new ArrayList();
+        List<VisualizationLineDefinition> removeList = new ArrayList<VisualizationLineDefinition>();
 
-        List<VisualizationLineDefinition> tempList = new ArrayList(vizLines);
+        List<VisualizationLineDefinition> tempList = new ArrayList<VisualizationLineDefinition>(vizLines);
 
         VisualizationLineDefinition removeLine = null;
 
@@ -1267,7 +1270,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
 
     public void removeAllLines(ActionEvent ae) {
 
-        List<VisualizationLineDefinition> vizLinesRemove = new ArrayList();
+        List<VisualizationLineDefinition> vizLinesRemove = new ArrayList<VisualizationLineDefinition>();
         for (VisualizationLineDefinition vld : vizLines) {
 
             vizLinesRemove.add(vld);
@@ -1281,7 +1284,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
             vizLines.remove(vld);
         }
 
-        vizLines = new ArrayList();
+        vizLines = new ArrayList<VisualizationLineDefinition>();
         dataTableVizLines.getChildren().clear();
         dataTableVizLines.getChildren().clear();
         selectView = loadSelectViewItems();
@@ -1390,9 +1393,9 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         HtmlDataTable tempTable = (HtmlDataTable) uiComponent;
         VisualizationLineDefinition vizLine = (VisualizationLineDefinition) tempTable.getRowData();
 
-        List<VisualizationLineDefinition> removeList = new ArrayList();
+        List<VisualizationLineDefinition> removeList = new ArrayList<VisualizationLineDefinition>();
 
-        List<VisualizationLineDefinition> tempList = new ArrayList(vizLines);
+        List<VisualizationLineDefinition> tempList = new ArrayList<VisualizationLineDefinition>(vizLines);
         for (VisualizationLineDefinition vizLineCheck : tempList) {
             if (vizLineCheck.equals(vizLine)) {
                 removeList.add(vizLineCheck);
@@ -1458,7 +1461,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
             }
         }
         //get all dtavariables assigned to selected measure
-        List<DataVariable> resultList = new ArrayList();
+        List<DataVariable> resultList = new ArrayList<DataVariable>();
 
         for (DataVariable dv : dvList){
             Collection<DataVariableMapping> dvMappings = dv.getDataVariableMappings();
@@ -1470,14 +1473,14 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         }  
         
         List<DataVariable> measureList = resultList;        
-        List<ArrayList> filterGroupingList = new ArrayList();
-        List<DataVariable> resultListFilter = new ArrayList();
-        List<ArrayList> filterGroupsList = new ArrayList();
+        List<ArrayList<DataVariable>> filterGroupingList = new ArrayList<ArrayList<DataVariable>>();
+        List<DataVariable> resultListFilter = new ArrayList<DataVariable>();
+        List<ArrayList<DataVariable>> filterGroupsList = new ArrayList<ArrayList<DataVariable>>();
         
         int filterGroupListCount = 0;
         for (VarGroupingUI varGrouping : filterGroupings) {
             if (varGrouping.getSelectedGroupId() != 0) {
-                ArrayList<DataVariable> tempList = new ArrayList();
+                ArrayList<DataVariable> tempList = new ArrayList<DataVariable>();
                 for (DataVariable dv : dvList) {
                     Collection<DataVariableMapping> dvMappings = dv.getDataVariableMappings();
                     for (DataVariableMapping dvMapping : dvMappings) {
@@ -1500,7 +1503,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         }
 
         if (filterGroupListCount == 1) {
-            for (List groupList : filterGroupsList) {
+            for (List<?> groupList : filterGroupsList) {
                 for (Object dvGroup : groupList) {
                     DataVariable dvGroupFilter = (DataVariable) dvGroup;
                     for (DataVariable dvMeasure : measureList) {
@@ -1514,9 +1517,9 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         }
         //for multiple groupings you need to get the actual variable
         for (VarGroupingUI varGrouping : filterGroupings) {
-            ArrayList<DataVariable> tempList = new ArrayList();
+            ArrayList<DataVariable> tempList = new ArrayList<DataVariable>();
             if (varGrouping.getSelectedGroupId().intValue() != 0) {
-                Iterator varIterb = resultList.iterator();
+                Iterator<DataVariable> varIterb = resultList.iterator();
                 while (varIterb.hasNext()) {
                     DataVariable dv = (DataVariable) varIterb.next();
                     Collection<DataVariableMapping> dvMappings = dv.getDataVariableMappings();
@@ -1530,7 +1533,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
                 }
                 filterGroupingList.add(tempList);
 
-                List<DataVariable> removeList = new ArrayList();
+                List<DataVariable> removeList = new ArrayList<DataVariable>();
                 //scroll through measure list
                 //if it matches any filter list dv keep it - if not remove it
                 for (DataVariable dv : measureList) {
@@ -1558,7 +1561,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
             }
         }
 
-        List<DataVariable> finalList = new ArrayList();
+        List<DataVariable> finalList = new ArrayList<DataVariable>();
         finalList = measureList;
         // once you go through you should have only one dv
         if (finalList.size() == 1) {
@@ -1720,7 +1723,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         
         try {
             tmpSubsetFile = File.createTempFile("tempsubsetfile.", ".tab");
-            List<DataVariable> dvsIn = new ArrayList();
+            List<DataVariable> dvsIn = new ArrayList<DataVariable>();
             dvsIn.add(xAxisVar);
             columnString += xAxisVar.getName();
             csvColumnString += xAxisVar.getName();
@@ -1747,7 +1750,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
             List<DataVariable> dvs = dvsIn;
             sourceList.clear();
             for (DataVariable dv : dvs){
-                List<DataVariableMapping> variableMappings = visualizationService.getSourceMappings((List) dv.getDataVariableMappings());
+                List<DataVariableMapping> variableMappings = visualizationService.getSourceMappings((List<DataVariableMapping>) dv.getDataVariableMappings());
                 for (DataVariableMapping dvm : variableMappings) {
                     sourceList.add(dvm);
                 }
@@ -1764,7 +1767,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
 
             if (tmpSubsetFile.exists()) {
                 Long subsetFileSize = tmpSubsetFile.length();
-                List<String> fileList = new ArrayList();
+                List<String> fileList = new ArrayList<String>();
                 BufferedReader reader = new BufferedReader(new FileReader(tmpSubsetFile));
                 String line = null;
                 while ((line = reader.readLine()) != null) {
@@ -1814,10 +1817,10 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
         return retString;
     }
 
-    private void loadDataTableData(List inStr, boolean resetIndexYear) {
-        selectBeginYears = new ArrayList();
-        selectEndYears = new ArrayList();
-        selectIndexDate = new ArrayList();
+    private void loadDataTableData(List<String> inStr, boolean resetIndexYear) {
+        selectBeginYears = new ArrayList<SelectItem>();
+        selectEndYears = new ArrayList<SelectItem>();
+        selectIndexDate = new ArrayList<SelectItem>();
         selectEndYears.add(new SelectItem(3000, "Max"));
         lowValStandard = new Float(0);
         lowValIndex = new Float(100);
@@ -2542,7 +2545,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     
     private void writeExcelFile(File fileIn) throws IOException {
         String parseString = dataString;
-        List list = Arrays.asList(parseString.split(";"));
+        List<String> list = Arrays.asList(parseString.split(";"));
         String parseColumn = columnString;
 
         try {
@@ -2560,7 +2563,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
                 rowCounter++;
             }
 
-            List columnHeads = Arrays.asList(parseColumn.split("\\|"));
+            List<String> columnHeads = Arrays.asList(parseColumn.split("\\|"));
 
             int ccounter = 0;
             for (Object c : columnHeads) {
@@ -2571,7 +2574,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
             rowCounter++;
 
             for (Object o : list) {
-                List dataFields = Arrays.asList(o.toString().split(","));
+                List<String> dataFields = Arrays.asList(o.toString().split(","));
                 int dcounter = 0;
                 for (Object d : dataFields) {
                     if (dcounter == 0) {
@@ -2615,7 +2618,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     private void getSourceList(  ) {
         String returnString = "";
         sourceEdited = false;
-        Set<String> set = new HashSet();
+        Set<String> set = new HashSet<String>();
         if (sourceList != null  && !sourceList.isEmpty()){
             for (DataVariableMapping dvm: sourceList){
             String checkSource = dvm.getGroup().getName();
@@ -2640,7 +2643,7 @@ public class ExploreDataPage extends VDCBaseBean  implements Serializable {
     
     private void checkUnits() {
 
-        Set<String> set = new HashSet();
+        Set<String> set = new HashSet<String>();
         int countLines = 0;
         forcedIndexMessage = "";
         for (VisualizationLineDefinition vld : vizLines) {

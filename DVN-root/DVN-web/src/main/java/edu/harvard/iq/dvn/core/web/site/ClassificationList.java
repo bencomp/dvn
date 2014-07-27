@@ -132,8 +132,8 @@ public class ClassificationList extends SortableList {
                 getClassificationUIs();
                 return visibleClassificationUIs;
             }
-            ArrayList removeList = new ArrayList();
-            Iterator iterator    = classificationUIs.iterator();
+            ArrayList<ClassificationUI> removeList = new ArrayList<ClassificationUI>();
+            Iterator<ClassificationUI> iterator    = classificationUIs.iterator();
             int index            = 0;
             int childCount       = 0;
             boolean isExpanded   = false;

@@ -500,7 +500,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
     public void changeSingleValCVOld(ValueChangeEvent event) {
         
         int rowIndex = customFieldsPanelSeries.getRowIndex();
-        DataModel fieldsDataModel = getCustomFieldsDataModel();
+        DataModel<Object[]> fieldsDataModel = getCustomFieldsDataModel();
         fieldsDataModel.setRowIndex(rowIndex);
 
         Object[] fieldsRowData = (Object[]) fieldsDataModel.getRowData();
@@ -520,7 +520,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
         elem.setMetadata(metadata);
         elem.setStrValue((String) event.getNewValue());
         elem.setDisplayOrder(0);
-        List values = new ArrayList();
+        List<StudyFieldValue> values = new ArrayList<StudyFieldValue>();
         values.add(elem);
         studyField.setStudyFieldValues(values);           
     }
@@ -544,7 +544,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
 
         List inStringList = (List) event.getNewValue();
 
-        List values = new ArrayList();
+        List<StudyFieldValue> values = new ArrayList<StudyFieldValue>();
         int counter = 0;
         for (Object inObj : inStringList) {
             String inStr = (String) inObj;
@@ -591,7 +591,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
     }
     
     private void removeStudyFieldValues(StudyField studyField) {
-        for (Iterator it = studyField.getStudyFieldValues().iterator(); it.hasNext();) {
+        for (Iterator<StudyFieldValue> it = studyField.getStudyFieldValues().iterator(); it.hasNext();) {
             StudyFieldValue sfv = (StudyFieldValue) it.next();
             editStudyService.removeCollectionElement(it,sfv);
 
@@ -1666,28 +1666,28 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
     }
 
     public String getAuthorInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
                 StudyFieldConstant.author);
         
         return getInputLevel(tfList);
     }
 
     public String getProducerInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
                 StudyFieldConstant.producer);
         
         return getInputLevel(tfList);
     }
 
     public String getSeriesInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
                 StudyFieldConstant.series);
         
         return getInputLevel(tfList);
     }
     
     public String getVersionInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
 
                 StudyFieldConstant.studyVersion);
 
@@ -1695,49 +1695,49 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
     }
 
     public String getSoftwareInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
                 StudyFieldConstant.software);
 
         return getInputLevel(tfList);
     }
 
     public String getGrantInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
                 StudyFieldConstant.grantNumber);
         
         return getInputLevel(tfList);
     }
 
     public String getDistributorInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
                 StudyFieldConstant.distributor);
 
         return getInputLevel(tfList);
     }
 
     public String getContactInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
                 StudyFieldConstant.distributorContact);
 
         return getInputLevel(tfList);
     }
 
     public String getAbstractInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
                 StudyFieldConstant.description);
 
         return getInputLevel(tfList);
     }
 
     public String getKeywordInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
                 StudyFieldConstant.keyword);
 
         return getInputLevel(tfList);
     }
 
     public String getTopicInputLevel() {
-        List tfList = getStudyMapTemplateFields(
+        List<TemplateField> tfList = getStudyMapTemplateFields(
                 StudyFieldConstant.topicClassification);
         
         return getInputLevel(tfList);
@@ -3649,7 +3649,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
     public void setFilesDataTable(HtmlDataTable filesDataTable) {
         this.filesDataTable = filesDataTable;
     }
-    public DataModel getCustomFieldsDataModel() {
+    public DataModel<Object[]> getCustomFieldsDataModel() {
         List values = new ArrayList(); 
         
         for (int i = 0; i < study.getTemplate().getTemplateFields().size(); i++) {

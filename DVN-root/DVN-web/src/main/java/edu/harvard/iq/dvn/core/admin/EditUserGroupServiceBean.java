@@ -69,7 +69,7 @@ public class EditUserGroupServiceBean implements  EditUserGroupService {
         userGroup.getLoginAffiliates().add(loginaffiliate);
         
         
-        userDetailBeans = new ArrayList();
+        userDetailBeans = new ArrayList<UserDetailBean>();
         UserDetailBean udb = new UserDetailBean();
         udb.setUserName("");
         userDetailBeans.add(udb);
@@ -86,8 +86,8 @@ public class EditUserGroupServiceBean implements  EditUserGroupService {
         if (userGroup==null) {
             throw new IllegalArgumentException("Unknown userGroup id: "+id);
         }
-        userDetailBeans = new ArrayList();
-        for (Iterator it = userGroup.getUsers().iterator(); it.hasNext();) {
+        userDetailBeans = new ArrayList<UserDetailBean>();
+        for (Iterator<VDCUser> it = userGroup.getUsers().iterator(); it.hasNext();) {
             VDCUser elem = (VDCUser) it.next();
             UserDetailBean udb = new UserDetailBean();
             udb.setUserName(elem.getUserName());
@@ -138,23 +138,23 @@ public class EditUserGroupServiceBean implements  EditUserGroupService {
                 }        
         
         }
-        List emptyLogins = new ArrayList();
-        for (Iterator it = userGroup.getLoginDomains().iterator(); it.hasNext();) {
+        List<LoginDomain> emptyLogins = new ArrayList<LoginDomain>();
+        for (Iterator<LoginDomain> it = userGroup.getLoginDomains().iterator(); it.hasNext();) {
             LoginDomain elem = (LoginDomain) it.next();
             if (elem.getIpAddress() == null || elem.getIpAddress().trim().equals("")) {
                 emptyLogins.add(elem);
             }
             
         }
-        for (Iterator it2 = emptyLogins.iterator(); it2.hasNext();) {
+        for (Iterator<LoginDomain> it2 = emptyLogins.iterator(); it2.hasNext();) {
             LoginDomain elem = (LoginDomain) it2.next();
             userGroup.getLoginDomains().remove(elem);
             em.remove(elem);
         }
         
         //remove any empty or null affiliate rows
-        List emptyAffiliates = new ArrayList();
-        Iterator iterator = userGroup.getLoginAffiliates().iterator();
+        List<LoginAffiliate> emptyAffiliates = new ArrayList<LoginAffiliate>();
+        Iterator<LoginAffiliate> iterator = userGroup.getLoginAffiliates().iterator();
         while (iterator.hasNext()) {
             LoginAffiliate loginaffiliate = (LoginAffiliate)iterator.next();
             if (loginaffiliate.getName() == null || loginaffiliate.getName().trim().equals("")) 

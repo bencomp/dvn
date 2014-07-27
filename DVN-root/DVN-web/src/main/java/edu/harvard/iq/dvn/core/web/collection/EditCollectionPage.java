@@ -125,7 +125,7 @@ public class EditCollectionPage extends VDCBaseBean implements java.io.Serializa
             }
         } else {
             collection = new VDCCollection();
-            collection.setStudies(new ArrayList());
+            collection.setStudies(new ArrayList<Study>());
             collection.setOwner(getVDCRequestBean().getCurrentVDC());
             collection.setLocalScope();
 
@@ -185,7 +185,7 @@ public class EditCollectionPage extends VDCBaseBean implements java.io.Serializa
         Long vdcId = getVDCRequestBean().getCurrentVDCId();
         VDCUser user = getVDCSessionBean().getUser();
         UserGroup ipUserGroup = getVDCSessionBean().getIpUserGroup();
-        List ownedStudyIds = new ArrayList();
+        List<Long> ownedStudyIds = new ArrayList<Long>();
 
         if (collection.isRootCollection()) {
             ownedStudyIds = vdcService.getOwnedStudyIds( collection.getOwner().getId() );
@@ -195,7 +195,7 @@ public class EditCollectionPage extends VDCBaseBean implements java.io.Serializa
         studyIds.retainAll( studyService.getVisibleStudies( studyIds, vdcId ) );
 
         
-        availableStudies = new ArrayList();
+        availableStudies = new ArrayList<StudyUI>();
         
         for (Long sid : studyIds) {
             StudyUI studyUI = new StudyUI(sid, user, ipUserGroup, StudyUI.isStudyInList(sid, collection.getStudies()));
@@ -234,7 +234,7 @@ public class EditCollectionPage extends VDCBaseBean implements java.io.Serializa
             if (availableStudiesMethod.equals("browse") && browseCollectionId != null ) {
                 setAvailableStudies(browseCollectionId);
             } else {
-                availableStudies = new ArrayList();    
+                availableStudies = new ArrayList<StudyUI>();    
             }
         }
     }    
@@ -320,7 +320,7 @@ public class EditCollectionPage extends VDCBaseBean implements java.io.Serializa
     }
 
     public void searchStudies(ActionEvent e) {
-        List searchTerms = new ArrayList();
+        List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
         SearchTerm st = new SearchTerm();
         st.setFieldName(searchField);
         st.setValue(searchValue);
@@ -399,7 +399,7 @@ public class EditCollectionPage extends VDCBaseBean implements java.io.Serializa
     }
     
     public List<StudyUI> getStudies() {
-        List studyUIs = new ArrayList();
+        List<StudyUI> studyUIs = new ArrayList<StudyUI>();
 
         VDCUser user = getVDCSessionBean().getUser();
         UserGroup ipUserGroup = getVDCSessionBean().getIpUserGroup();

@@ -32,6 +32,7 @@ import edu.harvard.iq.dvn.core.ddi.DDIServiceLocal;
 import edu.harvard.iq.dvn.core.index.IndexServiceLocal;
 import edu.harvard.iq.dvn.core.mail.MailServiceLocal;
 import edu.harvard.iq.dvn.core.study.DataTable;
+import edu.harvard.iq.dvn.core.study.FileMapEntry;
 import edu.harvard.iq.dvn.core.study.FileMetadata;
 import edu.harvard.iq.dvn.core.study.TabularDataFile;
 import edu.harvard.iq.dvn.core.study.NetworkDataFile;
@@ -42,6 +43,8 @@ import edu.harvard.iq.dvn.core.study.StudyFileServiceLocal;
 import edu.harvard.iq.dvn.core.study.StudyServiceLocal;
 import edu.harvard.iq.dvn.core.study.DataVariable;
 import edu.harvard.iq.dvn.core.study.StudyVersion;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -150,11 +153,11 @@ public class DSBIngestMessageBean implements MessageListener {
     private void parseXML(String xmlToParse, FileMetadata fileMetadata) {
         // now map and get dummy dataTable
         Study dummyStudy = new Study();
-        Map filesMap = ddiService.mapDDI(xmlToParse, dummyStudy.getLatestVersion());
-        Map variablesMap = ddiService.reMapDDI(xmlToParse, dummyStudy.getLatestVersion(), filesMap);
+        Map<String, FileMapEntry> filesMap = ddiService.mapDDI(xmlToParse, dummyStudy.getLatestVersion());
+        Map<Long, List<DataVariable>> variablesMap = ddiService.reMapDDI(xmlToParse, dummyStudy.getLatestVersion(), filesMap);
         if (variablesMap != null) {
 
-            Object mapKey = variablesMap.keySet().iterator().next();
+            Long mapKey = variablesMap.keySet().iterator().next();
             List<DataVariable> variablesMapEntry = (List<DataVariable>)variablesMap.get(mapKey);
 
             if (variablesMapEntry != null) {

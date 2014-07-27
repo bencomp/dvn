@@ -26,9 +26,11 @@ package edu.harvard.iq.dvn.core.web;
 
 import edu.harvard.iq.dvn.core.index.IndexServiceLocal;
 import edu.harvard.iq.dvn.core.index.SearchTerm;
+import edu.harvard.iq.dvn.core.study.DataVariable;
 import edu.harvard.iq.dvn.core.study.StudyField;
 import edu.harvard.iq.dvn.core.study.FileMetadataField; 
 import edu.harvard.iq.dvn.core.study.StudyFieldServiceLocal;
+import edu.harvard.iq.dvn.core.study.StudyFile;
 import edu.harvard.iq.dvn.core.study.StudyServiceLocal;
 import edu.harvard.iq.dvn.core.vdc.VDC;
 import edu.harvard.iq.dvn.core.vdc.VDCCollection;
@@ -107,16 +109,15 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
     StudyServiceLocal studyService;
     @EJB
     VariableServiceLocal varService;
-    private Locale currentLocale = getExternalContext().getRequestLocale();
     private ResourceBundle messages = ResourceBundle.getBundle("Bundle");
-    private HashMap advSearchFieldMap = new HashMap();
-    private HashMap fileMetadataFieldMap = new HashMap(); 
-    private HashMap operatorMap = new HashMap();
+    private HashMap<String, String> advSearchFieldMap = new HashMap<String, String>();
+    private HashMap<String, String> fileMetadataFieldMap = new HashMap<String, String>(); 
+    private HashMap<String, String> operatorMap = new HashMap<String, String>();
     private boolean collectionsIncluded;
     private boolean searchableFileLevelMetadata; 
     private boolean variableSearch;
     private boolean fileLevelMetadataSearch;
-    private List <SearchTerm>  variableInfoList = new ArrayList();
+    private List <SearchTerm>  variableInfoList = new ArrayList<SearchTerm>();
     
     // 3.3: 
     // We are no longer using the hard-coded list of "advanced search fields" 
@@ -166,17 +167,14 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         return searchableFileLevelMetadata;
     } 
 
-    public List getVariableInfoList() {
+    public List<SearchTerm> getVariableInfoList() {
         return variableInfoList;
     }
 
-    public void setVariableInfoList(List variableInfo) {
+    public void setVariableInfoList(List<SearchTerm> variableInfo) {
         this.variableInfoList = variableInfo;
     }
             
-
-    // <editor-fold defaultstate="collapsed" desc="Creator-managed Component Definition">
-    private int __placeholder;
 
     /**
      * <p>Automatically managed component initialization.  <strong>WARNING:</strong>
@@ -220,7 +218,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
     }
     
     private List<SelectItem> initSelectItemList(String[] itemsArray ) {
-        List<SelectItem> list = new ArrayList();
+        List<SelectItem> list = new ArrayList<SelectItem>();
         for (int i = 0; i < itemsArray.length; i++) {
             SelectItem selectItem = new SelectItem(itemsArray[i]);
             list.add(selectItem);          
@@ -300,10 +298,6 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         this.dropdown1SelectItems = uisi;
     }
 
-    private HtmlCommandButton searchCommand;
-
-    private HtmlPanelGrid gridPanel1;
-
     private HtmlInputText textField1 = new HtmlInputText();
 
     public HtmlInputText getTextField1() {
@@ -323,7 +317,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         this.dropdown3 = hsom;
     }
     
-    private List<SelectItem> dropdown3DefaultItems = new ArrayList();
+    private List<SelectItem> dropdown3DefaultItems = new ArrayList<SelectItem>();
 
     public List<SelectItem> getDropdown3DefaultItems() {
         return dropdown3DefaultItems;
@@ -336,7 +330,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
     // Dropdown for the searchable studyfile-level metadata keys, 
     // if available: 
     
-    private List<SelectItem> fileLevelMetaKeysDropdown = new ArrayList();
+    private List<SelectItem> fileLevelMetaKeysDropdown = new ArrayList<SelectItem>();
 
     public List<SelectItem> getFileLevelMetaKeysDropdown() {
         return fileLevelMetaKeysDropdown;
@@ -393,7 +387,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         this.dropdown4 = hsom;
     }
 
-    private List<SelectItem>  dropdown4DateItems = new ArrayList();
+    private List<SelectItem>  dropdown4DateItems = new ArrayList<SelectItem>();
     
     public List<SelectItem> getDropdown4DateItems() {
         return dropdown4DateItems;
@@ -403,7 +397,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         this.dropdown4DateItems = dropdown4DateItems;
     }
 
-    private List<SelectItem>  dropdown4NotDateItems = new ArrayList();
+    private List<SelectItem>  dropdown4NotDateItems = new ArrayList<SelectItem>();
 
     public List<SelectItem> getDropdown4NotDateItems() {
         return dropdown4NotDateItems;
@@ -534,7 +528,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         this.radioButtonList1 = hsor;
     }
     
-    private List<SelectItem> radioButtonList1DefaultItems = new ArrayList();
+    private List<SelectItem> radioButtonList1DefaultItems = new ArrayList<SelectItem>();
 
     public List<SelectItem> getRadioButtonList1DefaultItems() {
         return radioButtonList1DefaultItems;
@@ -582,7 +576,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         this.dataTable1 = hdt;
     }
     
-    private List<CollectionModel> collectionModelList = new ArrayList();
+    private List<CollectionModel> collectionModelList = new ArrayList<CollectionModel>();
 
     public List<CollectionModel> getCollectionModelList() {
         return collectionModelList;
@@ -629,7 +623,6 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         this.dataTableVariableInfo = hdt;
     }
 
-    private HtmlInputText input_VariableInfo;
     /** 
      * <p>Construct a new Page bean instance.</p>
      */
@@ -694,16 +687,16 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
     public String[] getSearchScopeList(long vdcId) {
 //        ArrayList displayNames = new ArrayList();
         VDC vdc = vdcService.find(new Long(vdcId));
-        Collection advSearchFields = vdc.getAdvSearchFields();
+        Collection<StudyField> advSearchFields = vdc.getAdvSearchFields();
         String[] advS = getFieldList(advSearchFields);
         return advS;
     }
 
-    private String[] getFieldList(final Collection advSearchFields) {
+    private String[] getFieldList(final Collection<StudyField> advSearchFields) {
         String[] advS = new String[advSearchFields.size()];
 //        DefaultSelectItemsArray dsia = new DefaultSelectItemsArray();
         int i = 0;
-        for (Iterator it = advSearchFields.iterator(); it.hasNext();) {
+        for (Iterator<StudyField> it = advSearchFields.iterator(); it.hasNext();) {
             StudyField elem = (StudyField) it.next();
             elem.getId();
             
@@ -737,11 +730,11 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
     }
 
     
-    private String[] getFileMetadataFieldList(final Collection fileMetaFields) {
+    private String[] getFileMetadataFieldList(final Collection<FileMetadataField> fileMetaFields) {
         String[] fields = new String[fileMetaFields.size()];
 //        DefaultSelectItemsArray dsia = new DefaultSelectItemsArray();
         int i = 0;
-        for (Iterator it = fileMetaFields.iterator(); it.hasNext();) {
+        for (Iterator<FileMetadataField> it = fileMetaFields.iterator(); it.hasNext();) {
             FileMetadataField elem = (FileMetadataField) it.next();
             elem.getId();
             
@@ -772,8 +765,8 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
     }    
 
 
-    public List getCollectionsDisplay() {
-        ArrayList collections = new ArrayList();
+    public List<CollectionModel> getCollectionsDisplay() {
+        ArrayList<CollectionModel> collections = new ArrayList<CollectionModel>();
         VDC vdc = getVDCRequestBean().getCurrentVDC();
         if (vdc != null) {
             getVDCCollections(vdc, collections);
@@ -783,7 +776,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         return collections;
     }
 
-    private void getVDCCollections(final VDC vdc, final ArrayList collections) {
+    private void getVDCCollections(final VDC vdc, final ArrayList<CollectionModel> collections) {
         int treeLevel = 1;
         
         if (  !new VDCUI(vdc).containsOnlyLinkedCollections() ) {
@@ -799,7 +792,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         
         // linked collections
         List<VDCCollection> linkedCollections = new VDCUI(vdc).getLinkedCollections(false);
-        for (Iterator it = linkedCollections.iterator(); it.hasNext();) {
+        for (Iterator<VDCCollection> it = linkedCollections.iterator(); it.hasNext();) {
             VDCCollection link = (VDCCollection) it.next();
             CollectionModel linkedRow = getRow(link, treeLevel);
             collections.add(linkedRow);
@@ -812,9 +805,9 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
         }
     }
 
-    private int buildDisplayModel(ArrayList collections, List<VDCCollection> vdcCollections, int level) {
+    private int buildDisplayModel(ArrayList<CollectionModel> collections, List<VDCCollection> vdcCollections, int level) {
         level++;
-        for (Iterator it = vdcCollections.iterator(); it.hasNext();) {
+        for (Iterator<VDCCollection> it = vdcCollections.iterator(); it.hasNext();) {
             VDCCollection elem = (VDCCollection) it.next();
 //            collection.setLevel(level);
             CollectionModel row = getRow(elem, level);
@@ -846,7 +839,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
 
     public String search() {
 //        String query = buildQuery();
-        List searchCollections = null;
+        List<VDCCollection> searchCollections = null;
         boolean searchOnlySelectedCollections = false;
         
         if (validateAllSearchCriteria()){
@@ -855,9 +848,9 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
                 if (radioButtonStr.indexOf("Only") > 1) {
                     searchOnlySelectedCollections = true;
 
-                 searchCollections = new ArrayList();
-                 for (Iterator it = collectionModelList.iterator(); it.hasNext();) {
-                      CollectionModel elem = (CollectionModel) it.next();
+                 searchCollections = new ArrayList<VDCCollection>();
+                 for (Iterator<CollectionModel> it = collectionModelList.iterator(); it.hasNext();) {
+                      CollectionModel elem = it.next();
                       if (elem.isSelected()) {
                           VDCCollection selectedCollection = vdcCollectionService.find(elem.getId());
                             searchCollections.add(selectedCollection);
@@ -882,8 +875,8 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
             sl.setVdcId(getVDCRequestBean().getCurrentVDCId());
             sl.setSearchTerms(searchTerms);
             if (isVariableSearch()) {
-                Map variableMap = new HashMap();
-                List studies = new ArrayList();
+                Map<Long, List<DataVariable>> variableMap = new HashMap<Long, List<DataVariable>>();
+                List<Long> studies = new ArrayList<Long>();
                 varService.determineStudiesFromVariables(viewableIds, studies, variableMap);
                 sl.setStudyIds(studies);
                 sl.setVariableMap(variableMap);
@@ -897,8 +890,8 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
                 * the individual variables are shown there for variable searches.
                 */
               
-                Map fileMap = new HashMap(); 
-                List studies = new ArrayList();
+                Map<Long, List<StudyFile>> fileMap = new HashMap<Long, List<StudyFile>>(); 
+                List<Long> studies = new ArrayList<Long>();
                 studyService.determineStudiesFromFiles(viewableIds, studies, fileMap);
                 sl.setStudyIds(studies);
                 sl.setFileMap(fileMap);
@@ -928,7 +921,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
                     searchOnlySelectedCollections = true;
 
 //                    searchCollections = new ArrayList();
-                    for (Iterator it = collectionModelList.iterator(); it.hasNext();) {
+                    for (Iterator<CollectionModel> it = collectionModelList.iterator(); it.hasNext();) {
                         CollectionModel elem = (CollectionModel) it.next();
                         if (elem.isSelected()) {
                             VDCCollection selectedCollection = vdcCollectionService.find(elem.getId());
@@ -1151,16 +1144,16 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
             sl.setSearchTerms(searchTerms);
             sl.setResultsWithFacets(resultsWithFacets);
             if (isVariableSearch()) {
-                Map variableMap = new HashMap();
-                List studies = new ArrayList();
+                Map<Long, List<DataVariable>> variableMap = new HashMap<Long, List<DataVariable>>();
+                List<Long> studies = new ArrayList<Long>();
                 varService.determineStudiesFromVariables(viewableIds, studies, variableMap);
                 sl.setStudyIds(studies);
                 sl.setVariableMap(variableMap);
 
             } else if (isFileLevelMetadataSearch()) {
               
-                Map fileMap = new HashMap();
-                List studies = new ArrayList();
+                Map<Long, List<StudyFile>> fileMap = new HashMap<Long, List<StudyFile>>();
+                List<Long> studies = new ArrayList<Long>();
                 studyService.determineStudiesFromFiles(viewableIds, studies, fileMap);
                 sl.setStudyIds(studies);
                 sl.setFileMap(fileMap);
@@ -1225,7 +1218,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
     }
 
     protected List<SearchTerm> buildSearchTermList() {
-        List<SearchTerm> searchTerms = new ArrayList();
+        List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
         if (((String) textField1.getValue()).length() > 0) {
             SearchTerm searchTerm1 = new SearchTerm();
             searchTerm1.setFieldName(advSearchFieldIndexName((String) dropdown1.getValue()));
@@ -1443,7 +1436,7 @@ public class AdvSearchPage extends VDCBaseBean implements java.io.Serializable {
 
             HtmlDataTable dataTable = (HtmlDataTable)ae.getComponent().getParent().getParent();
             if (dataTable.getRowCount()>1) {
-                List data = (List)dataTable.getValue();
+                List<?> data = (List<?>)dataTable.getValue();
                 int i = dataTable.getRowIndex();
                 data.remove(i);
             }

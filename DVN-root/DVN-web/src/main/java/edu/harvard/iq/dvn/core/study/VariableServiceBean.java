@@ -74,7 +74,7 @@ public class VariableServiceBean implements edu.harvard.iq.dvn.core.study.Variab
         return dv;
     }
     
-    public List getDataVariablesByFileOrder(Long dtId) {
+    public List<DataVariable> getDataVariablesByFileOrder(Long dtId) {
         String queryStr = "SELECT dv FROM DataTable dt JOIN dt.dataVariables dv where dt.id = " + dtId +" ORDER BY dv.fileOrder";
         Query query =em.createQuery(queryStr);
         List <DataVariable> dvs = query.getResultList();
@@ -87,7 +87,7 @@ public class VariableServiceBean implements edu.harvard.iq.dvn.core.study.Variab
 	int relOrder = 0; 
 	int absOffset = -1; 
 
-        for (Iterator el = dvs.iterator(); el.hasNext();) {
+        for (Iterator<DataVariable> el = dvs.iterator(); el.hasNext();) {
             DataVariable dv = (DataVariable) el.next();
 
 	    if ( absOffset == -1 ) {
@@ -248,8 +248,8 @@ public class VariableServiceBean implements edu.harvard.iq.dvn.core.study.Variab
         return type;
     }
     
-        public void determineStudiesFromVariables(List variables, List studies, Map variableMap) {
-        Iterator iter = variables.iterator();
+        public void determineStudiesFromVariables(List<Long> variables, List<Long> studies, Map<Long, List<DataVariable>> variableMap) {
+        Iterator<Long> iter = variables.iterator();
         while (iter.hasNext()) {
             Long dvId = (Long) iter.next();
             DataVariable dv = null;
@@ -263,13 +263,13 @@ public class VariableServiceBean implements edu.harvard.iq.dvn.core.study.Variab
             if (dv != null) {
                 Long studyId = dv.getDataTable().getStudyFile().getStudy().getId();
                 if ( studies.contains(studyId) ) {
-                    List dvList = (List) variableMap.get(studyId);
+                    List<DataVariable> dvList = variableMap.get(studyId);
                     dvList.add(dv);
                     variableMap.put(studyId, dvList);
 
                 } else {
                     studies.add( studyId );
-                    List dvList = new ArrayList();
+                    ArrayList<DataVariable> dvList = new ArrayList<DataVariable>();
                     dvList.add(dv);
                     variableMap.put(studyId, dvList);
                 }

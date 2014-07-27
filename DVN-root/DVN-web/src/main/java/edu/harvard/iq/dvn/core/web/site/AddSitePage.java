@@ -35,6 +35,9 @@ import edu.harvard.iq.dvn.core.vdc.VDCNetworkServiceLocal;
 import edu.harvard.iq.dvn.core.vdc.VDCServiceLocal;
 import edu.harvard.iq.dvn.core.web.common.StatusMessage;
 import edu.harvard.iq.dvn.core.web.common.VDCBaseBean;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -115,7 +118,7 @@ public class AddSitePage extends VDCBaseBean implements java.io.Serializable  {
     public void init() {
         super.init();
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        Iterator iterator = request.getParameterMap().keySet().iterator();
+        Iterator<String> iterator = request.getParameterMap().keySet().iterator();
         while (iterator.hasNext()) {
             Object key = (Object) iterator.next();
             if (key instanceof String && ((String) key).indexOf("dataverseType") != -1 && !request.getParameter((String) key).equals("")) {
@@ -138,7 +141,7 @@ public class AddSitePage extends VDCBaseBean implements java.io.Serializable  {
     private boolean result;
  
      //fields from dvrecordsmanager
-    private ArrayList itemBeans = new ArrayList();
+    private ArrayList<Object> itemBeans = new ArrayList<Object>();
     private static String GROUP_INDENT_STYLE_CLASS = "GROUP_INDENT_STYLE_CLASS";
     private static String GROUP_ROW_STYLE_CLASS = "groupRow";
     private static String CHILD_INDENT_STYLE_CLASS = "CHILD_INDENT_STYLE_CLASS";
@@ -172,7 +175,7 @@ public class AddSitePage extends VDCBaseBean implements java.io.Serializable  {
 
  
 
-    public ArrayList getItemBeans() {
+    public ArrayList<Object> getItemBeans() {
         return itemBeans;
     }
 
@@ -548,7 +551,7 @@ public class AddSitePage extends VDCBaseBean implements java.io.Serializable  {
      */
     
     private List<SelectItem> loadNetworkSelectItems() {
-        List selectItems = new ArrayList<SelectItem>();
+        ArrayList<SelectItem> selectItems = new ArrayList<SelectItem>();
         List<VDCNetwork> networkList = vdcNetworkService.getVDCSubNetworks();
 
         if (networkList.size() > 0) {
@@ -560,7 +563,7 @@ public class AddSitePage extends VDCBaseBean implements java.io.Serializable  {
         return selectItems;
     }
 
-    private List <SelectItem> networkSelectItems = new ArrayList();
+    private List <SelectItem> networkSelectItems = new ArrayList<SelectItem>();
 
     public List<SelectItem> getNetworkSelectItems() {
         return this.networkSelectItems;
@@ -608,9 +611,9 @@ public class AddSitePage extends VDCBaseBean implements java.io.Serializable  {
 
     private List<SelectItem> dataverseOptions = null;
 
-    public List getDataverseOptions() {
+    public List<SelectItem> getDataverseOptions() {
         if (this.dataverseOptions == null) {
-            dataverseOptions = new ArrayList();
+            dataverseOptions = new ArrayList<SelectItem>();
             /**
              * Choose Scholar if this dataverse will have your 
              * own name and will contain your own research, 

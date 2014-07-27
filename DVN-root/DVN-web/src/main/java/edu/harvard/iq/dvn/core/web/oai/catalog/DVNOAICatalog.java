@@ -103,7 +103,7 @@ public class DVNOAICatalog extends AbstractCatalog implements java.io.Serializab
     /**
      * pending resumption tokens
      */
-    private HashMap resumptionResults = new HashMap();
+    private HashMap<String, Object[]> resumptionResults = new HashMap<String, Object[]>();
 
     /**************************************************************
      * YOUR CODE GOES HERE
@@ -227,8 +227,8 @@ public class DVNOAICatalog extends AbstractCatalog implements java.io.Serializab
     public Map listIdentifiers(String from, String until, String set, String metadataPrefix) throws NoItemsMatchException  {
         purge(); // clean out old resumptionTokens
         Map listIdentifiersMap = new HashMap();
-        ArrayList headers = new ArrayList();
-        ArrayList identifiers = new ArrayList();
+        ArrayList<String> headers = new ArrayList<String>();
+        ArrayList<String> identifiers = new ArrayList<String>();
         
         /**********************************************************************
          * YOUR CODE GOES HERE
@@ -912,7 +912,7 @@ public class DVNOAICatalog extends AbstractCatalog implements java.io.Serializab
     public Map listSets(String resumptionToken)
         throws BadResumptionTokenException {
         Map listSetsMap = new HashMap();
-        ArrayList sets = new ArrayList();
+        ArrayList<String> sets = new ArrayList<String>();
         purge(); // clean out old resumptionTokens
         
         /**********************************************************************
@@ -997,9 +997,9 @@ public class DVNOAICatalog extends AbstractCatalog implements java.io.Serializab
      * Purge tokens that are older than the configured time-to-live.
      */
     private void purge() {
-        ArrayList old = new ArrayList();
+        ArrayList<String> old = new ArrayList<String>();
         Date now = new Date();
-        Iterator keySet = resumptionResults.keySet().iterator();
+        Iterator<String> keySet = resumptionResults.keySet().iterator();
         while (keySet.hasNext()) {
             String key = (String)keySet.next();
             String dateValue = key;
@@ -1013,7 +1013,7 @@ public class DVNOAICatalog extends AbstractCatalog implements java.io.Serializab
                 old.add(key);
             }
         }
-        Iterator iterator = old.iterator();
+        Iterator<String> iterator = old.iterator();
         while (iterator.hasNext()) {
             String key = (String)iterator.next();
             resumptionResults.remove(key);

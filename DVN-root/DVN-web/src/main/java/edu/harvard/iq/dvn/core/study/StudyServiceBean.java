@@ -53,6 +53,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter; 
 import java.io.BufferedReader; 
 import java.io.InputStreamReader; 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
@@ -182,7 +183,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
             mailService.sendStudyInReviewNotification(user.getEmail(), sv.getMetadata().getTitle());
 
             // Notify all curators and admins that study is in review
-            for (Iterator it = study.getOwner().getVdcRoles().iterator(); it.hasNext();) {
+            for (Iterator<?> it = study.getOwner().getVdcRoles().iterator(); it.hasNext();) {
                 VDCRole elem = (VDCRole) it.next();
                 if (elem.getRole().getName().equals(RoleServiceLocal.CURATOR) || elem.getRole().getName().equals(RoleServiceLocal.ADMIN)) {
                     mailService.sendStudyAddedCuratorNotification(elem.getVdcUser().getEmail(), user.getUserName(), sv.getMetadata().getTitle(), study.getOwner().getName());
@@ -286,7 +287,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
     public Study getStudyByHarvestInfo(VDC dataverse, String harvestIdentifier) {
         String queryStr = "SELECT s FROM Study s WHERE s.owner.id = '" + dataverse.getId() + "' and s.harvestIdentifier = '" + harvestIdentifier + "'";
         Query query = em.createQuery(queryStr);
-        List resultList = query.getResultList();
+        List<?> resultList = query.getResultList();
         Study study = null;
         if (resultList.size() > 1) {
             throw new EJBException("More than one study found with owner_id= " + dataverse.getId() + " and harvestIdentifier= " + harvestIdentifier);
@@ -566,7 +567,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         // faster, so now this delete goes in steps
 
         // step 1: determine dtIds
-        List dtIdList = new ArrayList();
+        List<Long> dtIdList = new ArrayList<Long>();
         Query query = em.createNativeQuery(SELECT_DATATABLE_IDS).setParameter(1, studyId);
         for (Object currentResult : query.getResultList()) {
             dtIdList.add(new Long(((Integer)currentResult).longValue()));
@@ -574,7 +575,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
 
         if ( !dtIdList.isEmpty() ) {
             // step 2: determine variables
-            List varList = new ArrayList();
+            List<Long> varList = new ArrayList<Long>();
             query = em.createNativeQuery(SELECT_DATAVARIABLE_IDS_PREFIX + "(" + generateTempTableString(dtIdList) + ")");
             for (Object currentResult : query.getResultList()) {
                 varList.add(new Long(((Integer)currentResult).longValue()));
@@ -613,7 +614,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         // faster, so now this delete goes in steps
 
         // step 1: determine dtIds
-        List gbrIdList = new ArrayList();
+        List<Long> gbrIdList = new ArrayList<Long>();
         Query query = em.createNativeQuery(SELECT_GUESTBOOK_RESPONSE_IDS).setParameter(1, studyId);
         for (Object currentResult : query.getResultList()) {
             gbrIdList.add(new Long(((Integer)currentResult).longValue()));
@@ -652,7 +653,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
      *
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Study getStudyForSearch(Long studyId, Map studyFields) {
+    public Study getStudyForSearch(Long studyId, Map<String, ?> studyFields) {
 
         Study study = em.find(Study.class, studyId);
         if (study == null) {
@@ -667,9 +668,9 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         }
 
         if (studyFields != null) {
-            for (Object studyField : studyFields.keySet()) {
+            for (String studyField : studyFields.keySet()) {
 
-                String fieldName = (String) studyField;
+                String fieldName = studyField;
                 if ("authorName".equals(fieldName)) {
                     for (Iterator<StudyAuthor> it = metadata.getStudyAuthors().iterator(); it.hasNext();) {
                         StudyAuthor elem = it.next();
@@ -713,42 +714,42 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         return study;
     }
 
-    public List getStudies() {
+    public List<Study> getStudies() {
         String query = "SELECT s FROM Study s ORDER BY s.id";
-        return (List) em.createQuery(query).getResultList();
+        return (List<Study>) em.createQuery(query).getResultList();
     }
     
-    public List getStudiesByIdRange(long begin, long end) {
+    public List<Long> getStudiesByIdRange(long begin, long end) {
         String query = "SELECT s FROM Study s WHERE s.id > " + begin + " AND s.id < " + end + " ORDER BY s.id";
         logger.info("query: "+query);
         try {
-            return (List) em.createQuery(query).getResultList();
+            return (List<Long>) em.createQuery(query).getResultList();
         } catch (Exception ex) {
             return null; 
         }
     }
 
-    public List getRecentStudies(Long vdcId, int numResults) {
+    public List<Long> getRecentStudies(Long vdcId, int numResults) {
         String query = "SELECT s FROM Study s " +
                 "ORDER BY s.createTime desc";
         if (vdcId != null){
             query = "SELECT s FROM Study s WHERE s.owner.id = " + vdcId + " ORDER BY s.createTime desc";
         }
         if (numResults == -1) {
-            return (List) em.createQuery(query).getResultList();
+            return (List<Long>) em.createQuery(query).getResultList();
         } else {
-            return (List) em.createQuery(query).setMaxResults(numResults).getResultList();
+            return (List<Long>) em.createQuery(query).setMaxResults(numResults).getResultList();
         }
     }
 
-    public List getRecentlyReleasedStudyIds(Long vdcId, Long vdcNetworkId, int numResults) {
+    public List<Long> getRecentlyReleasedStudyIds(Long vdcId, Long vdcNetworkId, int numResults) {
         String linkedStudyClause = "";
         String networkClause = "";
         if (vdcNetworkId != null && !vdcNetworkId.equals(vdcNetworkService.findRootNetwork().getId())) {
             networkClause = " and v.vdcnetwork_id = " + vdcNetworkId + " ";
             VDCNetwork vdcNetwork = vdcNetworkService.findById(vdcNetworkId);
 
-            List<Study> linkedStudys = (List) vdcNetwork.getLinkedStudies();
+            List<Study> linkedStudys = (List<Study>) vdcNetwork.getLinkedStudies();
             List<Long> studyIdList = new ArrayList<Long>();
             for (Study study : linkedStudys) {
                 studyIdList.add(study.getId());
@@ -803,7 +804,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         return returnList;
     }
     
-    public List getMostDownloadedStudyIds(Long vdcId, Long vdcNetworkId, int numResults) {
+    public List<Long> getMostDownloadedStudyIds(Long vdcId, Long vdcNetworkId, int numResults) {
 
         String dataverseClause = "";
         if (vdcId != null) {
@@ -816,7 +817,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
             networkClause = " and v.vdcnetwork_id = " + vdcNetworkId + " ";
             VDCNetwork vdcNetwork = vdcNetworkService.findById(vdcNetworkId);
 
-            List<Study> linkedStudys = (List) vdcNetwork.getLinkedStudies();
+            List<Study> linkedStudys = (List<Study>) vdcNetwork.getLinkedStudies();
             List<Long> studyIdList = new ArrayList<Long>();
             for (Study study : linkedStudys) {
                 studyIdList.add(study.getId());
@@ -929,7 +930,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
      * @param orderBy
      * @return list of oredered ids
      */
-    public List getOrderedStudies(List studyIdList, String orderBy) {
+    public List<Long> getOrderedStudies(List<Long> studyIdList, String orderBy) {
         if (orderBy == null || studyIdList == null || studyIdList.size() == 0) {
             return studyIdList;
         }
@@ -997,7 +998,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         }
     }
 
-    public List getDvOrderedStudyVersionIds(Long vdcId, String orderBy, boolean ascending) {
+    public List<Long> getDvOrderedStudyVersionIds(Long vdcId, String orderBy, boolean ascending) {
         List<Long> returnList = new ArrayList<Long>();
         if (!ascending && orderBy.equals("s.protocol, s.authority, s.studyId") ) {
             orderBy = "s.protocol desc, s.authority desc, s.studyId ";
@@ -1022,7 +1023,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         return returnList;
     }
 
-    public List getDvOrderedDeaccessionedStudyVersionIds(Long vdcId, String orderBy, boolean ascending) {
+    public List<Long> getDvOrderedDeaccessionedStudyVersionIds(Long vdcId, String orderBy, boolean ascending) {
         List<Long> returnList = new ArrayList<Long>();
         if (!ascending && orderBy.equals("s.protocol, s.authority, s.studyId") ) {
             orderBy = "s.protocol desc, s.authority desc, s.studyId ";
@@ -1050,7 +1051,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
 
 
 
-    public List getAllDeaccessionedStudyVersionIdsByContributor(Long contributorId, String orderBy, boolean ascending) {
+    public List<Long> getAllDeaccessionedStudyVersionIdsByContributor(Long contributorId, String orderBy, boolean ascending) {
         List<Long> returnList = new ArrayList<Long>();
         if (!ascending && orderBy.equals("s.protocol, s.authority, s.studyId") ) {
             orderBy = "s.protocol desc, s.authority desc, s.studyId ";
@@ -1077,7 +1078,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         return returnList;
     }
 
-        public List getAllStudyVersionIdsByContributor(Long contributorId, String orderBy, boolean ascending) {
+        public List<Long> getAllStudyVersionIdsByContributor(Long contributorId, String orderBy, boolean ascending) {
         List<Long> returnList = new ArrayList<Long>();
         if (!ascending && orderBy.equals("s.protocol, s.authority, s.studyId") ) {
             orderBy = "s.protocol desc, s.authority desc, s.studyId ";
@@ -1103,7 +1104,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         return returnList;
     }
 
-    public List getDvOrderedStudyVersionIdsByContributor(Long vdcId, Long contributorId, String orderBy, boolean ascending) {
+    public List<Long> getDvOrderedStudyVersionIdsByContributor(Long vdcId, Long contributorId, String orderBy, boolean ascending) {
         List<Long> returnList = new ArrayList<Long>();
         if (!ascending && orderBy.equals("s.protocol, s.authority, s.studyId") ) {
             orderBy = "s.protocol desc, s.authority desc, s.studyId ";
@@ -1132,7 +1133,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         return returnList;
     }
 
-    public List getDvOrderedDeaccessionedStudyVersionIdsByContributor(Long vdcId, Long contributorId, String orderBy, boolean ascending) {
+    public List<Long> getDvOrderedDeaccessionedStudyVersionIdsByContributor(Long vdcId, Long contributorId, String orderBy, boolean ascending) {
         List<Long> returnList = new ArrayList<Long>();
         if (!ascending && orderBy.equals("s.protocol, s.authority, s.studyId") ) {
             orderBy = "s.protocol desc, s.authority desc, s.studyId ";
@@ -1161,7 +1162,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         return returnList;
     }
 
-       public List getDvOrderedStudyIds(Long vdcId, String orderBy, boolean ascending ) {
+       public List<?> getDvOrderedStudyIds(Long vdcId, String orderBy, boolean ascending ) {
         if (!ascending && orderBy.equals("s.protocol, s.authority, s.studyId") ) {
             orderBy = "s.protocol desc, s.authority desc, s.studyId ";
         }
@@ -1169,9 +1170,9 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
           if (!ascending) {
               query+= " desc";
           }
-            return (List) em.createQuery(query).getResultList();
+            return (List<?>) em.createQuery(query).getResultList();
         }
-        public List getDvOrderedStudyIdsByCreator(Long vdcId, Long creatorId, String orderBy, boolean ascending ) {
+        public List<?> getDvOrderedStudyIdsByCreator(Long vdcId, Long creatorId, String orderBy, boolean ascending ) {
          if (!ascending && orderBy.equals("s.protocol, s.authority, s.studyId") ) {
             orderBy = "s.protocol desc, s.authority desc, s.studyId ";
         }
@@ -1179,7 +1180,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
           if (!ascending) {
               query+= " desc";
           }
-            return (List) em.createQuery(query).getResultList();
+            return (List<?>) em.createQuery(query).getResultList();
         }
 
 
@@ -1321,10 +1322,10 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
             query += " and s.lastUpdateTime >'" + beginTime + "'";
             //    query+=" and s.lastUpdateTime <'" +endTime+"'";
             query += " order by s.studyId";
-            List updatedStudies = em.createQuery(query).getResultList();
+            List<?> updatedStudies = em.createQuery(query).getResultList();
 
 
-            for (Iterator it = updatedStudies.iterator(); it.hasNext();) {
+            for (Iterator<?> it = updatedStudies.iterator(); it.hasNext();) {
                 Study study = (Study) it.next();
                 logger.info("Exporting study " + study.getStudyId());
 
@@ -1428,7 +1429,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
 
         study.setStudyLock(lock);
         if (user.getStudyLocks() == null) {
-            user.setStudyLocks(new ArrayList());
+            user.setStudyLocks(new ArrayList<StudyLock>());
         }
         user.getStudyLocks().add(lock);
 
@@ -1517,7 +1518,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         try {
             Query query = em.createQuery(queryStr);
             query.setParameter("hostName", hostName);
-	    List resultList = query.getResultList();
+	    List<?> resultList = query.getResultList();
 	    if (resultList.size() > 0) {
 		remoteAuth = (RemoteAccessAuth) resultList.get(0);
 	    }
@@ -1758,9 +1759,9 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         }
     }
 
-    private void clearCollection(Collection collection) {
+    private void clearCollection(Collection<?> collection) {
         if (collection!=null) {
-            for (Iterator it = collection.iterator(); it.hasNext();) {
+            for (Iterator<?> it = collection.iterator(); it.hasNext();) {
                 Object elem =  it.next();
                 it.remove();
                 em.remove(elem);
@@ -1820,8 +1821,8 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
 
     // visible studies are defined as those that are released and not in a restricted vdc
     // (unless you are in vdc)
-    public List getVisibleStudies(List studyIds, Long vdcId) {
-        List returnList = new ArrayList();
+    public List<Long> getVisibleStudies(List<Long> studyIds, Long vdcId) {
+        List<Long> returnList = new ArrayList<Long>();
         if (studyIds != null && studyIds.size() > 0) {
             generateTempTableString(studyIds);
             String queryString = "SELECT s.id " +
@@ -1853,10 +1854,10 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         return "select tempid from tempid";
     }
 
-    private String generateIDsforTempInsert(List idList) {
+    private String generateIDsforTempInsert(List<Long> idList) {
         int count = 0;
         StringBuffer sb = new StringBuffer();
-        Iterator iter = idList.iterator();
+        Iterator<Long> iter = idList.iterator();
         while (iter.hasNext()) {
             Long id = (Long) iter.next();
             sb.append("(").append(id).append(",").append(count++).append(")");
@@ -1869,13 +1870,13 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
     }
 
     // this method will return only the subset of studies that are public
-    public List getViewableStudies(List<Long> studyIds) {
+    public List<Long> getViewableStudies(List<Long> studyIds) {
         return getViewableStudies(studyIds, null, null, null);
     }
 
     // viewable studies are those that are defined as not restricted to the user
-    public List getViewableStudies(List<Long> studyIds, Long userId, Long ipUserGroupId, Long vdcId) {
-        List returnList = new ArrayList();
+    public List<Long> getViewableStudies(List<Long> studyIds, Long userId, Long ipUserGroupId, Long vdcId) {
+        List<Long> returnList = new ArrayList<Long>();
 
         if (studyIds != null && studyIds.size() > 0) {
             // we first create a temp table with all the study ids; this is because when the list is too large
@@ -2005,7 +2006,6 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
     public void exportStudies(List<Long> studyIds, String exportFormat) {
         String logTimestamp = exportLogFormatter.format(new Date());
         Logger exportLogger = Logger.getLogger("edu.harvard.iq.dvn.core.study.StudyServiceBean.export." + logTimestamp);
-        List<Long> harvestedStudyIds = new ArrayList<Long>();
         try {
 
             exportLogger.addHandler(new FileHandler(FileUtil.getExportFileDir() + File.separator + "export_" + logTimestamp + ".log"));
@@ -2231,7 +2231,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
 
 
         // Step 3: map the ddi
-        Map dataFilesMap = null; 
+        Map<String, FileMapEntry> dataFilesMap = null; 
 
 	if (isNesstarHarvest) {
 	    dataFilesMap = ddiService.mapDDI(ddiFile, studyVersion, true);
@@ -2295,7 +2295,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         }
 
         if (!isNesstarHarvest) {
-            Map variablesMap = ddiService.reMapDDI(ddiFile, studyVersion, dataFilesMap);
+            Map<Long, List<DataVariable>> variablesMap = ddiService.reMapDDI(ddiFile, studyVersion, dataFilesMap);
 
             logger.info("doImportStudy: ddi re-mapped");
 
@@ -2480,7 +2480,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
     }
     
     
-    public long getStudyDownloadCount(List studyIds) {
+    public long getStudyDownloadCount(List<Long> studyIds) {
         String queryString  = "select sum(downloadcount) " +
                 "from studyfileactivity  sfa " +
                 "where sfa.study_id in (" + generateTempTableString(studyIds) + ")";
@@ -2520,7 +2520,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         return studyDownloadCount != null ? studyDownloadCount.longValue() : 0;
     }
     
-    public long getStudyFileCount(List studyIds) {
+    public long getStudyFileCount(List<Long> studyIds) {
         String queryString  = "SELECT count(f.*) FROM FileMetadata f, studyversion sv " +
                 "WHERE  f.studyVersion_id = sv.id" +
                 " and sv.versionstate = '" + StudyVersion.VersionState.RELEASED + "'"
@@ -2602,8 +2602,8 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
         }
     }
 
-    public void determineStudiesFromFiles(List studyFiles, List studies, Map fileMap) {
-        Iterator iter = studyFiles.iterator();
+    public void determineStudiesFromFiles(List<Long> studyFiles, List<Long> studies, Map<Long, List<StudyFile>> fileMap) {
+        Iterator<Long> iter = studyFiles.iterator();
         while (iter.hasNext()) {
             Long sfId = (Long) iter.next();
             StudyFile studyFile = null;
@@ -2617,13 +2617,13 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
             if (studyFile != null) {
                 Long studyId = studyFile.getStudy().getId();
                 if ( studies.contains(studyId) ) {
-                    List fileList = (List) fileMap.get(studyId);
+                    List<StudyFile> fileList = fileMap.get(studyId);
                     fileList.add(studyFile);
                     fileMap.put(studyId, fileList);
 
                 } else {
                     studies.add( studyId );
-                    List fileList = new ArrayList();
+                    List<StudyFile> fileList = new ArrayList<StudyFile>();
                     fileList.add(studyFile);
                     fileMap.put(studyId, fileList);
                 }

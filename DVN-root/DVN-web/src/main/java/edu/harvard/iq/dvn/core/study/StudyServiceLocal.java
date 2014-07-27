@@ -70,7 +70,7 @@ public interface StudyServiceLocal extends java.io.Serializable {
     public Study getStudyByHarvestInfo(VDC vdc, String harvestIdentifier);
 
     //1
-    public Study getStudyForSearch(Long studyId, Map studyFields);
+    public Study getStudyForSearch(Long studyId, Map<String, ?> studyFields);
 
     //2
     public void updateStudy(Study study);
@@ -86,22 +86,22 @@ public interface StudyServiceLocal extends java.io.Serializable {
     public void deleteStudyList(List<Long> studyIds);
    
     //?
-    public List getStudies();
+    public List<Study> getStudies();
 
     //1
     public List<Long> getAllNonHarvestedStudyIds();
 
     //1
-    java.util.List getOrderedStudies(List studyIdList, String orderBy);
+    java.util.List<Long> getOrderedStudies(List<Long> studyIdList, String orderBy);
 
     //?
-    java.util.List getRecentStudies(Long vdcId, int numResults);
+    java.util.List<Long> getRecentStudies(Long vdcId, int numResults);
     
     //?1
-    public List getDvOrderedStudyIds(Long vdcId, String orderBy, boolean ascending );
+    public List<?> getDvOrderedStudyIds(Long vdcId, String orderBy, boolean ascending );
 
     //?1
-    public List getDvOrderedStudyIdsByCreator(Long vdcId, Long creatorId, String orderBy, boolean ascending );
+    public List<?> getDvOrderedStudyIdsByCreator(Long vdcId, Long creatorId, String orderBy, boolean ascending );
 
     //4
     public void incrementNumberOfDownloads(Long studyFileId, Long currentVDCId);
@@ -144,32 +144,32 @@ public interface StudyServiceLocal extends java.io.Serializable {
     void deleteDataVariables(Long dataTableId);
 
     //2
-    edu.harvard.iq.dvn.core.study.Study saveStudyVersion(StudyVersion studyVersion, Long userId);
+    Study saveStudyVersion(StudyVersion studyVersion, Long userId);
 
     //3
-    edu.harvard.iq.dvn.core.study.Study importHarvestStudy(File xmlFile, Long vdcId, Long userId, String harvestIdentifier);
+    Study importHarvestStudy(File xmlFile, Long vdcId, Long userId, String harvestIdentifier);
     //void importHarvestStudyExperimental(File ddiFile, Study study);
     
     //3
-    edu.harvard.iq.dvn.core.study.Study importStudy(File xmlFile,  Long harvestFormatTypeId, Long vdcId, Long userId);
+    Study importStudy(File xmlFile,  Long harvestFormatTypeId, Long vdcId, Long userId);
     
     //3
-    edu.harvard.iq.dvn.core.study.Study importStudy(File xmlFile,  Long harvestFormatTypeId, Long vdcId, Long userId, List<StudyFileEditBean> filesToUpload);
+    Study importStudy(File xmlFile,  Long harvestFormatTypeId, Long vdcId, Long userId, List<StudyFileEditBean> filesToUpload);
     
     //3
-    edu.harvard.iq.dvn.core.study.Study importStudy(File xmlFile,  Long harvestFormatTypeId, Long vdcId, Long userId, String harvestIdentifier, List<StudyFileEditBean> filesToUpload);
+    Study importStudy(File xmlFile,  Long harvestFormatTypeId, Long vdcId, Long userId, String harvestIdentifier, List<StudyFileEditBean> filesToUpload);
 
     //1
-    List getVisibleStudies(List studyIds, Long vdcId);
+    List<Long> getVisibleStudies(List<Long> studyIds, Long vdcId);
 
     //1
-    List getViewableStudies(List<Long> studyIds);
+    List<Long> getViewableStudies(List<Long> studyIds);
     
     //1
-    List getViewableStudies(List<Long> studyIds, Long userId, Long ipUserGroupId, Long vdcId);
+    List<Long> getViewableStudies(List<Long> studyIds, Long userId, Long ipUserGroupId, Long vdcId);
 
     //3
-    List getStudyIdsForExport();
+    List<Long> getStudyIdsForExport();
 
     //?
     public List<Long> getAllStudyIds();
@@ -192,7 +192,7 @@ public interface StudyServiceLocal extends java.io.Serializable {
     public Timestamp getLastUpdatedTime(Long vdcId);
    
     //1
-    public long getStudyDownloadCount(List studyIds);
+    public long getStudyDownloadCount(List<Long> studyIds);
     public long getStudyDownloadCount(Long studyId);
     public long getStudyVersionDownloadCount(Long studyId);
     public Long getActivityCount(Long vdcId);
@@ -211,32 +211,32 @@ public interface StudyServiceLocal extends java.io.Serializable {
 
     public void deaccessionStudy(StudyVersion studyVersion);
 
-    public List getDvOrderedStudyVersionIds(Long vdcId, String orderBy, boolean ascending);
-    public List getDvOrderedStudyVersionIdsByContributor(Long vdcId, Long contributorId, String orderBy, boolean ascending);
+    public List<?> getDvOrderedStudyVersionIds(Long vdcId, String orderBy, boolean ascending);
+    public List<?> getDvOrderedStudyVersionIdsByContributor(Long vdcId, Long contributorId, String orderBy, boolean ascending);
 
-    public List getAllStudyVersionIdsByContributor(Long contributorId, String orderBy, boolean ascending);
+    public List<?> getAllStudyVersionIdsByContributor(Long contributorId, String orderBy, boolean ascending);
 
-    public List getDvOrderedDeaccessionedStudyVersionIdsByContributor(java.lang.Long vdcId, java.lang.Long contributorId, java.lang.String orderBy, boolean ascending);
+    public List<?> getDvOrderedDeaccessionedStudyVersionIdsByContributor(java.lang.Long vdcId, java.lang.Long contributorId, java.lang.String orderBy, boolean ascending);
 
-    public List getDvOrderedDeaccessionedStudyVersionIds(java.lang.Long vdcId, java.lang.String orderBy, boolean ascending);
+    public List<?> getDvOrderedDeaccessionedStudyVersionIds(java.lang.Long vdcId, java.lang.String orderBy, boolean ascending);
 
-    public List getAllDeaccessionedStudyVersionIdsByContributor(java.lang.Long contributorId, java.lang.String orderBy, boolean ascending);
+    public List<?> getAllDeaccessionedStudyVersionIdsByContributor(java.lang.Long contributorId, java.lang.String orderBy, boolean ascending);
 
     public List<MetadataFormatType> findAllMetadataExportFormatTypes();
 
-    public List getMostDownloadedStudyIds(Long vdcId, Long vdcNetworkId, int numResults);
+    public List<?> getMostDownloadedStudyIds(Long vdcId, Long vdcNetworkId, int numResults);
 
-    public List getRecentlyReleasedStudyIds(Long vdcId, Long vdcNetworkId, int numResults);
+    public List<?> getRecentlyReleasedStudyIds(Long vdcId, Long vdcNetworkId, int numResults);
     
-    public void determineStudiesFromFiles(List studyFiles, List studies, Map fileMap); 
+    public void determineStudiesFromFiles(List<Long> studyFiles, List<Long> studies, Map<Long, List<StudyFile>> fileMap); 
     
     public Long getMaxStudyTableId ();
     
-    public List getStudiesByIdRange(long begin, long end);
+    public List<Long> getStudiesByIdRange(long begin, long end);
 
-    public long getStudyFileCount(java.lang.Long studyId);
+    public long getStudyFileCount(Long studyId);
 
-    public long getStudyFileCount(java.util.List studyIds);
+    public long getStudyFileCount(List<Long> studyIds);
 
     public File transformToDDI(String toString, String stylesheetFileName, String tmpDirPath);
 

@@ -27,11 +27,16 @@
  */
 package edu.harvard.iq.dvn.core.ddi;
 
+import edu.harvard.iq.dvn.core.study.DataTable;
+import edu.harvard.iq.dvn.core.study.DataVariable;
+import edu.harvard.iq.dvn.core.study.FileMapEntry;
 import edu.harvard.iq.dvn.core.study.StudyExporter;
 import edu.harvard.iq.dvn.core.study.StudyVersion;
 import edu.harvard.iq.dvn.core.study.TabularDataFile;
 import java.io.File;
 import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import javax.ejb.Local;
 
@@ -42,10 +47,10 @@ import javax.ejb.Local;
 @Local
 public interface DDIServiceLocal extends StudyExporter, java.io.Serializable {
 
-    Map mapDDI(String xmlToParse, StudyVersion studyVersion);
-    Map mapDDI(File ddiFile, StudyVersion studyVersion, Boolean noSubsettables);
-    Map reMapDDI(String xmlToParse, StudyVersion studyVersion, Map filesMap);
-    Map reMapDDI(File ddiFile, StudyVersion studyVersion, Map filesMap);
+    Map<String, FileMapEntry> mapDDI(String xmlToParse, StudyVersion studyVersion);
+    Map<String, FileMapEntry> mapDDI(File ddiFile, StudyVersion studyVersion, Boolean noSubsettables);
+    Map<Long, List<DataVariable>> reMapDDI(String xmlToParse, StudyVersion studyVersion, Map<String, FileMapEntry> filesMap);
+    Map<Long, List<DataVariable>> reMapDDI(File ddiFile, StudyVersion studyVersion, Map<String, FileMapEntry> filesMap);
 
     void exportDataFile(TabularDataFile tdf, OutputStream out);
 

@@ -63,11 +63,11 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
     private HtmlInputTextarea descriptionInput  = new HtmlInputTextarea();
     private HtmlInputText     parentInput;
     private HtmlSelectOneMenu parentSelect;
-    private ArrayList         parentSelectItems;
+    private ArrayList<SelectItem>         parentSelectItems;
 
     //rowselection fields
-    private ArrayList selectedDataverses = new ArrayList();
-    private ArrayList dataverses = new ArrayList();// internal list of retreived records.
+    private ArrayList<DataverseGrouping> selectedDataverses = new ArrayList<DataverseGrouping>();
+    private ArrayList<DataverseGrouping> dataverses = new ArrayList<DataverseGrouping>();// internal list of retreived records.
     private boolean multiRowSelect = true;
     private HtmlInputHidden classificationId;
     private HtmlInputHidden multiRowSelector;
@@ -84,8 +84,8 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
         super.init();
         System.out.println("cid is "+classId);
         initParentSelectItems();
-        dataverses         = new ArrayList();
-        selectedDataverses = new ArrayList();
+        dataverses         = new ArrayList<DataverseGrouping>();
+        selectedDataverses = new ArrayList<DataverseGrouping>();
         initItemBeans();
         if (classId != null) {
             initClassificationBean();
@@ -111,8 +111,8 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
 
     private void initSelectedItemBeans() {
          VDCGroup vdcGroup = vdcGroupService.findById(classId);
-         List list = (List)vdcGroup.getVdcs();
-         Iterator iterator = list.iterator();
+         List<VDC> list = vdcGroup.getVdcs();
+         Iterator<VDC> iterator = list.iterator();
          while(iterator.hasNext()) {
              VDC vdc = (VDC)iterator.next();
              DataverseGrouping dataverse = new DataverseGrouping(vdc.getId(), vdc.getName(), vdc.getAffiliation());
@@ -121,7 +121,7 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
              dataverse.setRestricted(vdc.isRestricted());
              selectedDataverses.add(dataverse);
              //initialize the members
-             Iterator innerIterator = dataverses.iterator();
+             Iterator<DataverseGrouping> innerIterator = dataverses.iterator();
              while (innerIterator.hasNext()) {
                  DataverseGrouping selectorDataverse = (DataverseGrouping)innerIterator.next();
                  if (dataverse.getId().equals(selectorDataverse.getId()) ) {
@@ -133,8 +133,8 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
     }
 
      private void initItemBeans() {
-         List list = (List)vdcService.findInfoAll();
-         Iterator iterator = list.iterator();
+         List<Object[]> list = vdcService.findInfoAll();
+         Iterator<Object[]> iterator = list.iterator();
          while(iterator.hasNext()) {
              Object[] vdcInfo = (Object[])iterator.next();
              DataverseGrouping dataversegrouping = new DataverseGrouping((Long) vdcInfo[0], (String) vdcInfo[1], (String) vdcInfo[2]);
@@ -145,8 +145,8 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
 
     private void initParentSelectItems() {
        
-        Iterator iterator     = classificationList.getClassificationUIs().iterator();
-        parentSelectItems     = new ArrayList();
+        Iterator<ClassificationUI> iterator     = classificationList.getClassificationUIs().iterator();
+        parentSelectItems     = new ArrayList<SelectItem>();
         SelectItem parentSelectItem = new SelectItem(new Long("0"), "Select Classification");
         parentSelectItems.add(parentSelectItem);
  
@@ -182,7 +182,7 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
         return this.parentSelect;
     }
 
-    public ArrayList getParentSelectItems() {
+    public ArrayList<SelectItem> getParentSelectItems() {
         return parentSelectItems;
     }
 
@@ -209,7 +209,7 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
         this.parentSelect = parentselect;
     }
 
-    public void setParentSelectItems(ArrayList parentselectitems) {
+    public void setParentSelectItems(ArrayList<SelectItem> parentselectitems) {
         this.parentSelectItems = parentselectitems;
     }
 
@@ -260,15 +260,15 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
     }
 
 
-    public ArrayList getDataverses() {
+    public ArrayList<DataverseGrouping> getDataverses() {
         return dataverses;
     }
 
-    public ArrayList getSelectedDataverses() {
+    public ArrayList<DataverseGrouping> getSelectedDataverses() {
         return selectedDataverses;
     }
 
-    public void setSelectedDataverses(ArrayList selectedDataverses) {
+    public void setSelectedDataverses(ArrayList<DataverseGrouping> selectedDataverses) {
         this.selectedDataverses = selectedDataverses;
     }
 
@@ -328,9 +328,8 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
             getVDCRenderBean().getFlash().put("successMessage",SUCCESS_MESSAGE);
         } catch (Exception e) {
             getVDCRenderBean().getFlash().put("warningMessage",FAIL_MESSAGE);
-        } finally {
-            return "/networkAdmin/NetworkOptionsPage.xhtml?faces-redirect=true&tab=classifications";
         }
+        return "/networkAdmin/NetworkOptionsPage.xhtml?faces-redirect=true&tab=classifications";
         
     }
     
@@ -342,7 +341,7 @@ public class AddClassificationsPage extends VDCBaseBean implements Serializable 
         //now add all of these dataverses to the parent
  
             Long[] vdcs         = new Long[selectedDataverses.size()];
-            Iterator iterator   = selectedDataverses.iterator();
+            Iterator<DataverseGrouping> iterator   = selectedDataverses.iterator();
             int count           = 0;
             while (iterator.hasNext()) {
                 DataverseGrouping dataversegrouping = (DataverseGrouping)iterator.next();

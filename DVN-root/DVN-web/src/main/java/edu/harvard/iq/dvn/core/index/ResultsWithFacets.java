@@ -31,7 +31,7 @@ import org.apache.lucene.search.Query;
 
 public class ResultsWithFacets {
 
-    private ArrayList matchIds;
+    private ArrayList<Long> matchIds;
     List<FacetResult> facetResultList;
     private List<CategoryPath> facetsQueried = new ArrayList<CategoryPath>();
     /** @todo: should this be static? */
@@ -59,7 +59,7 @@ public class ResultsWithFacets {
         this.facetResultList = resultList;
     }
 
-    public ArrayList getMatchIds() {
+    public ArrayList<Long> getMatchIds() {
         return matchIds;
     }
 
@@ -68,7 +68,7 @@ public class ResultsWithFacets {
     }
 
     protected void setMatchIds(List<Long> matchIds) {
-        this.matchIds = (ArrayList) matchIds;
+        this.matchIds = (ArrayList<Long>) matchIds;
     }
     
     public List<CategoryPath> getFacetsQueried() {

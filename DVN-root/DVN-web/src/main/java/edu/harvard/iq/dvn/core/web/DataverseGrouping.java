@@ -87,8 +87,8 @@ public class DataverseGrouping extends SortableList {
     private static final String typeColumnName          = "Type";
 
     private boolean isAccordion = false;
-    ArrayList parentItems    = new ArrayList();
-    ArrayList childItems     = new ArrayList();
+    ArrayList<DataverseGrouping> parentItems    = new ArrayList<DataverseGrouping>();
+    ArrayList<DataverseGrouping> childItems     = new ArrayList<DataverseGrouping>();
     ArrayList xtraItems      = new ArrayList();
     PagedDataModel dataModel = new PagedDataModel();
 
@@ -130,7 +130,7 @@ public class DataverseGrouping extends SortableList {
         this.affiliation    = affiliation;
     }
 
-    public DataverseGrouping(Long id, String name, String recordType, ArrayList parentItems, boolean isExpanded, String expandImage, String contractImage, Long parentClassification) {
+    public DataverseGrouping(Long id, String name, String recordType, ArrayList<DataverseGrouping> parentItems, boolean isExpanded, String expandImage, String contractImage, Long parentClassification) {
         super(nameColumnName);
         this.groupKey    = name.replaceAll(" ", "").toLowerCase();
         this.name        = name;
@@ -149,7 +149,7 @@ public class DataverseGrouping extends SortableList {
         this.classificationSelect = false;
     }
     
-    public DataverseGrouping(Long id, String name, String recordType, ArrayList parentItems, boolean isExpanded, String expandImage, String contractImage,
+    public DataverseGrouping(Long id, String name, String recordType, ArrayList<DataverseGrouping> parentItems, boolean isExpanded, String expandImage, String contractImage,
             Long parentClassification, Long numberOfDataverses) {
 
         
@@ -312,7 +312,7 @@ public class DataverseGrouping extends SortableList {
 
     //BEGIN RECURSIVE NODE ACTIONS
 
-    List removeFromList = new ArrayList();
+    List<DataverseGrouping> removeFromList = new ArrayList<DataverseGrouping>();
       /**
      * Utility method to recursively add all child nodes to their parents in the data table.
      */
@@ -323,7 +323,7 @@ public class DataverseGrouping extends SortableList {
             synchronized(parentItems) {
                 parentItems.addAll(index, childItems);
             }
-            Iterator iterator = childItems.iterator();
+            Iterator<DataverseGrouping> iterator = childItems.iterator();
             DataverseGrouping childitem = (DataverseGrouping)iterator.next();
             
             recurseAndExpandNodeAction(childitem);
@@ -339,7 +339,7 @@ public class DataverseGrouping extends SortableList {
     }
 
     private void recurseAndExpandNodeAction(DataverseGrouping childItem) {
-            Iterator iterator = parentItems.iterator();
+            Iterator<DataverseGrouping> iterator = parentItems.iterator();
             parentItems.contains(childItem);
               while (iterator.hasNext()) {
                   DataverseGrouping item = (DataverseGrouping)iterator.next();
@@ -356,7 +356,7 @@ public class DataverseGrouping extends SortableList {
      */
     public void recurseAndContractNodeAction() {
         if (childItems != null && childItems.size() > 0) {
-            Iterator iterator = childItems.iterator();
+            Iterator<DataverseGrouping> iterator = childItems.iterator();
             while(iterator.hasNext()) {
                 DataverseGrouping childitem = (DataverseGrouping)iterator.next();
                 recurseAndContractNodeAction(childitem);
@@ -369,7 +369,7 @@ public class DataverseGrouping extends SortableList {
     }
 
     private void recurseAndContractNodeAction(DataverseGrouping childItem) {
-        Iterator iterator = parentItems.iterator();
+        Iterator<DataverseGrouping> iterator = parentItems.iterator();
               while (iterator.hasNext()) {
                   DataverseGrouping item = (DataverseGrouping)iterator.next();
                   if (item.parentClassification.equals(childItem.id)) {

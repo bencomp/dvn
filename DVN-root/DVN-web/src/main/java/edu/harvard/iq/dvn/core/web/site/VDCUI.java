@@ -33,6 +33,7 @@ import edu.harvard.iq.dvn.core.study.StudyServiceLocal;
 import edu.harvard.iq.dvn.core.vdc.HarvestingDataverseServiceLocal;
 import edu.harvard.iq.dvn.core.vdc.VDC;
 import edu.harvard.iq.dvn.core.vdc.VDCActivity;
+import edu.harvard.iq.dvn.core.vdc.VDCCollection;
 import edu.harvard.iq.dvn.core.vdc.VDCServiceLocal;
 import edu.harvard.iq.dvn.core.web.LocalizedDate;
 import edu.harvard.iq.dvn.core.web.collection.CollectionUI;
@@ -232,11 +233,11 @@ public class VDCUI  implements java.io.Serializable {
      /* old fields -- these supposedly are no longer used, however
      * references still exist in the codebase, so remove with caution . . .
      */
-    public List getLinkedCollections() {
+    public List<VDCCollection> getLinkedCollections() {
         return getLinkedCollections(false);
     }
 
-    public List getLinkedCollections(boolean getHiddenCollections) {
+    public List<VDCCollection> getLinkedCollections(boolean getHiddenCollections) {
         // getHiddenCollections no longer used
         return vdc.getLinkedCollections();
     }

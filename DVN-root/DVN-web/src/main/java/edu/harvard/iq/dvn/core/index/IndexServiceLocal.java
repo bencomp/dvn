@@ -47,9 +47,9 @@ public interface IndexServiceLocal extends java.io.Serializable {
     public void updateIndexList(List <Long> studyIds);
     public void updateStudiesInCollections();
 
-    public List search(VDC vdc, List<VDCCollection> searchCollections, List<SearchTerm> searchTerm);
+    public List<Long> search(VDC vdc, List<VDCCollection> searchCollections, List<SearchTerm> searchTerm);
     
-    public List search(VDC vdc, List<SearchTerm> searchTerms);
+    public List<Long> search(VDC vdc, List<SearchTerm> searchTerms);
 
     public void updateStudy(long studyId);
 

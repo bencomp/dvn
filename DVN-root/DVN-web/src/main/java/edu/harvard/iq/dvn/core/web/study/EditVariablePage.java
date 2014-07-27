@@ -70,9 +70,9 @@ public class EditVariablePage extends VDCBaseBean implements java.io.Serializabl
     }
     
     private String dvFilter;
-    private List<DataVariable> dataVariables = new ArrayList();
+    private List<DataVariable> dataVariables = new ArrayList<DataVariable>();
     
-    private List validationDvNames = new ArrayList();
+    private List<String> validationDvNames = new ArrayList<String>();
     
     
     public void init() {
@@ -201,7 +201,7 @@ public class EditVariablePage extends VDCBaseBean implements java.io.Serializabl
         }
         
         // now check unique varName against other dv names
-        Iterator iter = validationDvNames.iterator();
+        Iterator<String> iter = validationDvNames.iterator();
         while (iter.hasNext()) {
             if ( dvName.equals( (String) iter.next() ) ) {
                 errorMessage = "must be unique.";

@@ -91,7 +91,7 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
         fileDetails = new ArrayList<FileDetailBean>();
         studyRequests = new ArrayList<StudyRequestBean>();
         currentVersionFiles = true;
-        Map<Long,String> studyFileNames = new HashMap();
+        Map<Long,String> studyFileNames = new HashMap<Long, String>();
         
         // general study restriction
         if (study.isRestricted()) {
@@ -101,11 +101,11 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
         }
         
         // and users/groups with access to study
-        for (Iterator it = study.getAllowedUsers().iterator(); it.hasNext();) {
+        for (Iterator<VDCUser> it = study.getAllowedUsers().iterator(); it.hasNext();) {
             VDCUser user = (VDCUser) it.next();
             studyPermissions.add(new PermissionBean(user));
         }
-        for (Iterator it2 = study.getAllowedGroups().iterator(); it2.hasNext();) {
+        for (Iterator<UserGroup> it2 = study.getAllowedGroups().iterator(); it2.hasNext();) {
             UserGroup group = (UserGroup) it2.next();
             studyPermissions.add(new PermissionBean(group));
         }
@@ -133,11 +133,11 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
                 fd.setFileMetadata(fmd);
                 fd.setCurrentVersion( versionNumber != null && versionNumber.equals((sfArray[2])) );
                 fd.setFilePermissions(new ArrayList<PermissionBean>());
-                for (Iterator it4 = elem.getAllowedUsers().iterator(); it4.hasNext();) {
+                for (Iterator<VDCUser> it4 = elem.getAllowedUsers().iterator(); it4.hasNext();) {
                     VDCUser elem2 = (VDCUser) it4.next();
                     fd.getFilePermissions().add(new PermissionBean(elem2));
                 }
-                for (Iterator it5 = elem.getAllowedGroups().iterator(); it5.hasNext();) {
+                for (Iterator<UserGroup> it5 = elem.getAllowedGroups().iterator(); it5.hasNext();) {
                     UserGroup elem2 = (UserGroup) it5.next();
                     fd.getFilePermissions().add(new PermissionBean(elem2));
                 }
@@ -150,7 +150,7 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
         }
 
         // file level restrictions
-        for (Iterator detailIter = fileDetails.iterator(); detailIter.hasNext();) {
+        for (Iterator<FileDetailBean> detailIter = fileDetails.iterator(); detailIter.hasNext();) {
             FileDetailBean elem = (FileDetailBean) detailIter.next();
             if (elem.getStudyFile().isRestricted()) {
                 elem.setFileRestriction("Restricted");
@@ -187,10 +187,10 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
     }
     
     
-   Map<VDCUser,List<StudyRequestBean>> requestsToMail = new HashMap();
+   Map<VDCUser,List<StudyRequestBean>> requestsToMail = new HashMap<VDCUser, List<StudyRequestBean>>();
     
     public void updateRequests() {
-        List removeBeans = new ArrayList();
+        List<StudyRequestBean> removeBeans = new ArrayList<StudyRequestBean>();
         for (StudyRequestBean elem : studyRequests) {
             VDCUser requestUser = elem.getStudyRequest().getVdcUser();
             
@@ -201,9 +201,9 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
                 removeBeans.add(elem);
                 
                 // add to queue to mail on save
-                List userRequests = requestsToMail.get(requestUser);
+                List<StudyRequestBean> userRequests = requestsToMail.get(requestUser);
                 if (userRequests == null) {
-                    userRequests = new ArrayList();
+                    userRequests = new ArrayList<StudyRequestBean>();
                 }
                 userRequests.add(elem);
                 requestsToMail.put(requestUser, userRequests);
@@ -214,16 +214,16 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
                 removeBeans.add(elem);
 
                 // add to queue to mail on save
-                List userRequests = requestsToMail.get(requestUser);
+                List<StudyRequestBean> userRequests = requestsToMail.get(requestUser);
                 if (userRequests == null) {
-                    userRequests = new ArrayList();
+                    userRequests = new ArrayList<StudyRequestBean>();
                 }
                 userRequests.add(elem);
                 requestsToMail.put(requestUser, userRequests);            
             }
             
         }
-        for (Iterator it2 = removeBeans.iterator(); it2.hasNext();) {
+        for (Iterator<StudyRequestBean> it2 = removeBeans.iterator(); it2.hasNext();) {
             StudyRequestBean elem = (StudyRequestBean) it2.next();
             studyRequests.remove(elem);
         }
@@ -239,7 +239,7 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
             study.setRestricted(false);
         }
         
-        for (Iterator it = fileDetails.iterator(); it.hasNext();) {
+        for (Iterator<FileDetailBean> it = fileDetails.iterator(); it.hasNext();) {
             FileDetailBean elem = (FileDetailBean) it.next();
             if (elem.getFileRestriction().equals("Restricted")) {
                 elem.getStudyFile().setRestricted(true);
@@ -260,8 +260,8 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
         // if save succeeds, send out all accept/reject mail messages
         for (Entry<VDCUser,List<StudyRequestBean>> requestEntry : requestsToMail.entrySet()) {
             
-            List<String> acceptedFiles = new ArrayList();
-            List<String> rejectedFiles = new ArrayList();
+            List<String> acceptedFiles = new ArrayList<String>();
+            List<String> rejectedFiles = new ArrayList<String>();
                         
             for (StudyRequestBean elem : requestEntry.getValue()) {
                if (Boolean.TRUE.equals(elem.getAccept()) ){
@@ -351,13 +351,13 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
     private Collection<FileDetailBean> fileDetailsCopy;
         
     public String updateAllFilesList(String filterTerm){
-        List fileIds = studyFileService.findAllFileIdsSearch(study.getId(), filterTerm);
+        List<Long> fileIds = studyFileService.findAllFileIdsSearch(study.getId(), filterTerm);
         if (!fileIds.isEmpty()) {
-            fileDetails = new ArrayList();            
+            fileDetails = new ArrayList<FileDetailBean>();            
             ArrayList<FileDetailBean> myFileDetails = new ArrayList<FileDetailBean>(fileDetailsCopy);
-            for (Iterator it = fileIds.iterator(); it.hasNext();) {
+            for (Iterator<Long> it = fileIds.iterator(); it.hasNext();) {
                 Long elem = (Long) it.next();
-                for (Iterator it2 = myFileDetails.iterator(); it2.hasNext();) {
+                for (Iterator<FileDetailBean> it2 = myFileDetails.iterator(); it2.hasNext();) {
                     FileDetailBean fdb = (FileDetailBean) it2.next();
                     if (((Long) fdb.getStudyFile().getId()).equals(elem)) {
                         fileDetails.add(fdb);
@@ -505,8 +505,8 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
     private FileDetailBean fileDetail;
         
     public void removeFilePermissions(boolean removeChecked) {        
-        List checkedBeans = new ArrayList();
-        for (Iterator it2 = fileDetail.getFilePermissions().iterator(); it2.hasNext();) {
+        List<PermissionBean> checkedBeans = new ArrayList<PermissionBean>();
+        for (Iterator<PermissionBean> it2 = fileDetail.getFilePermissions().iterator(); it2.hasNext();) {
             PermissionBean elem = (PermissionBean) it2.next();
             if (elem.isChecked()) {
                 if (elem.getUser()!=null) {
@@ -515,7 +515,7 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
                     // because this does not work:
                     // fileDetail.getStudyFile().getAllowedGroups().remove(elem.getUser());
                     // (Some wierdness in EJB where it doesn't think elem.getUser() is equivalent to the user in the list.)
-                    for (Iterator userIt = fileDetail.getStudyFile().getAllowedUsers().iterator(); userIt.hasNext();) {
+                    for (Iterator<VDCUser> userIt = fileDetail.getStudyFile().getAllowedUsers().iterator(); userIt.hasNext();) {
                         VDCUser user = (VDCUser) userIt.next();
                         if (user.getId().equals(elem.getUser().getId())) {
                             foundUser= user;
@@ -535,7 +535,7 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
                 } else if (elem.getGroup()!=null) {
                     // See above note for removing elem.getUser()
                     UserGroup foundGroup = null;
-                    for (Iterator groupIt = fileDetail.getStudyFile().getAllowedGroups().iterator(); groupIt.hasNext();) {
+                    for (Iterator<UserGroup> groupIt = fileDetail.getStudyFile().getAllowedGroups().iterator(); groupIt.hasNext();) {
                         UserGroup group = (UserGroup) groupIt.next();
                         if (group.getId().equals(elem.getGroup().getId())) {
                             foundGroup = group;
@@ -557,7 +557,7 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
             }
         }
 
-        for (Iterator it3 = checkedBeans.iterator(); it3.hasNext();) {
+        for (Iterator<PermissionBean> it3 = checkedBeans.iterator(); it3.hasNext();) {
             PermissionBean elem = (PermissionBean)it3.next();
             if (elem.isChecked()) {
                 fileDetail.getFilePermissions().remove(elem);
@@ -566,7 +566,7 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
     }
     
     public void removeStudyPermissions() {
-        List checkedBeans = new ArrayList();
+        List<PermissionBean> checkedBeans = new ArrayList<PermissionBean>();
         
         for (Iterator<PermissionBean> it = studyPermissions.iterator(); it.hasNext();) {
             PermissionBean elem = it.next();
@@ -583,7 +583,7 @@ public class EditStudyPermissionsServiceBean implements EditStudyPermissionsServ
             }
             
         }
-        for (Iterator it = checkedBeans.iterator(); it.hasNext();) {
+        for (Iterator<PermissionBean> it = checkedBeans.iterator(); it.hasNext();) {
             PermissionBean elem = (PermissionBean) it.next();
             if (elem.isChecked()) {
                 studyPermissions.remove(elem);

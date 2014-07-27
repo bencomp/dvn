@@ -831,11 +831,11 @@ public class AnalysisPage extends VDCBaseBean implements java.io.Serializable {
 
     // download: radio button items
 
-    private List dwnldFileTypeItems = null;
+    private List<String> dwnldFileTypeItems = null;
 
-    public List getDwnldFileTypeItems() {
+    public List<String> getDwnldFileTypeItems() {
         if (dwnldFileTypeItems == null) {
-            dwnldFileTypeItems = new ArrayList();
+            dwnldFileTypeItems = new ArrayList<String>();
             dwnldFileTypeItems.add("D01");// Text
             dwnldFileTypeItems.add("D04");// RData
             dwnldFileTypeItems.add("D02");// Splus
@@ -844,7 +844,7 @@ public class AnalysisPage extends VDCBaseBean implements java.io.Serializable {
         return dwnldFileTypeItems;
     }
     
-    public void setDwnldFileTypeItems(List dfti) {
+    public void setDwnldFileTypeItems(List<String> dfti) {
         dwnldFileTypeItems = dfti; 
     }
     
@@ -1912,7 +1912,7 @@ public class AnalysisPage extends VDCBaseBean implements java.io.Serializable {
                     // catStat exists
                     dbgLog.fine("catStat exists");
 
-                    for (Iterator elc = catStat.iterator(); elc.hasNext();) {
+                    for (Iterator<VariableCategory> elc = catStat.iterator(); elc.hasNext();) {
                         VariableCategory dvcat = (VariableCategory) elc.next();
                         if ((dvcat.getValue().equals(".")) && (dvcat.getFrequency() == 0)){
                             continue;
@@ -2333,7 +2333,7 @@ public class AnalysisPage extends VDCBaseBean implements java.io.Serializable {
         // saving the data for the recode-table
         // new and replace: both cases
         // replace-case: remove the key first?
-        recodeSchema.put(newVarId, new ArrayList(recodeDataList));
+        recodeSchema.put(newVarId, new ArrayList<Object>(recodeDataList));
 
         // update the value-label-mapping-data storage
         // new and replace: both cases
@@ -2837,7 +2837,7 @@ public class AnalysisPage extends VDCBaseBean implements java.io.Serializable {
         recodeSchema.remove(newVarId);
 
         // new and replace: both cases
-        recodeSchema.put(newVarId, new ArrayList(recodeDataList));
+        recodeSchema.put(newVarId, new ArrayList<Object>(recodeDataList));
 
         // update the value-label-mapping-data storage
         // new and replace: both cases
@@ -5551,7 +5551,7 @@ public class AnalysisPage extends VDCBaseBean implements java.io.Serializable {
     }
 
     private List<Integer> getCurrentVarBoxSize(String mdlName) {
-        List<Integer> bs = new ArrayList();
+        List<Integer> bs = new ArrayList<Integer>();
         int noBoxR = getAnalysisApplicationBean().getSpecMap().get(mdlName)
             .getNoRboxes();
         if (noBoxR == 1) {
@@ -6923,7 +6923,7 @@ public class AnalysisPage extends VDCBaseBean implements java.io.Serializable {
         int counter = 0;
         for (int i = firstRow; i < lastRow; i++) {
             List<Object> rw = new ArrayList<Object>();
-            rw = (ArrayList) dt4Display.get(i);
+            rw = (List<Object>) dt4Display.get(i);
             if ((Boolean) rw.get(0)) {
                 counter++;
             }
@@ -8354,8 +8354,8 @@ public class AnalysisPage extends VDCBaseBean implements java.io.Serializable {
     public String getVariableLabelfromId(String varId) {
 
         for (int i = 0; i < dt4Display.size(); i++) {
-            if (((String) ((ArrayList) dt4Display.get(i)).get(2)).equals(varId)) {
-                return (String) ((ArrayList) dt4Display.get(i)).get(4);
+            if (((String) ((ArrayList<Object>) dt4Display.get(i)).get(2)).equals(varId)) {
+                return (String) ((ArrayList<Object>) dt4Display.get(i)).get(4);
             }
         }
         return null;

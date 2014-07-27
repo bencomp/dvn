@@ -37,13 +37,13 @@ import org.jboss.seam.faces.context.RenderScoped;
 @RenderScoped
 public class VDCRenderBean  implements java.io.Serializable  {
     
-    Map<String,Object> flash = new HashMap();
+    Map<String,Object> flash = new HashMap<String, Object>();
 
-    public Map getFlash() {
+    public Map<String, Object> getFlash() {
         return flash;
     }
 
-    public void setFlash(Map flash) {
+    public void setFlash(Map<String, Object> flash) {
         this.flash = flash;
     }
 

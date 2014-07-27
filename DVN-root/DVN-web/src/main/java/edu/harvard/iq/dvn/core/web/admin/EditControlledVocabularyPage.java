@@ -66,7 +66,7 @@ public class EditControlledVocabularyPage extends VDCBaseBean implements java.io
             controlledVocabulary = templateService.getControlledVocabulary(cvId);
         } else {
            controlledVocabulary = new ControlledVocabulary();
-           controlledVocabulary.setControlledVocabularyValues(new ArrayList());
+           controlledVocabulary.setControlledVocabularyValues(new ArrayList<ControlledVocabularyValue>());
         }  
     }
 
@@ -114,7 +114,7 @@ public class EditControlledVocabularyPage extends VDCBaseBean implements java.io
     }
     
     public List<SelectItem> getControlledVocabularySelectItems() {
-        List selectItems = new ArrayList();
+        List<SelectItem> selectItems = new ArrayList<SelectItem>();
             for (ControlledVocabularyValue cvv : controlledVocabulary.getControlledVocabularyValues()) {
                 SelectItem si = new SelectItem(cvv.getValue());
                 selectItems.add(si);

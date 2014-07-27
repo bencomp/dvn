@@ -649,7 +649,7 @@ public class UtilitiesPage extends VDCBaseBean implements java.io.Serializable  
   
      public List<SelectItem> getImportDVs() {
         List<SelectItem> importDVsSelectItems = new ArrayList<SelectItem>();
-        Iterator iter = vdcService.findAllNonHarvesting().iterator();
+        Iterator<?> iter = vdcService.findAllNonHarvesting().iterator();
         while (iter.hasNext()) {
             VDC vdc = (VDC) iter.next();
             importDVsSelectItems.add( new SelectItem(vdc.getId(), vdc.getName()) );

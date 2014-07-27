@@ -38,9 +38,9 @@ public interface EditStudyFilesService extends java.io.Serializable {
     public void save(Long vdcId, Long userId);
     public StudyVersion getStudyVersion();
 
-    java.util.List getCurrentFiles();
+    java.util.List<StudyFileEditBean> getCurrentFiles();
 
-    void setCurrentFiles(List currentFiles);
+    void setCurrentFiles(List<StudyFileEditBean> currentFiles);
 
     java.util.List getNewFiles();
 

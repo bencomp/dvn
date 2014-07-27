@@ -30,6 +30,7 @@ package edu.harvard.iq.dvn.core.ddi;
 import edu.harvard.iq.dvn.core.vdc.VDC;
 import edu.harvard.iq.dvn.core.study.DataTable;
 import edu.harvard.iq.dvn.core.study.DataVariable;
+import edu.harvard.iq.dvn.core.study.FileMapEntry;
 import edu.harvard.iq.dvn.core.study.FileMetadata;
 import edu.harvard.iq.dvn.core.study.Metadata;
 import edu.harvard.iq.dvn.core.study.OtherFile;
@@ -76,6 +77,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -388,7 +390,7 @@ public class DDIServiceBean implements DDIServiceLocal {
         createStdyDscr(xmlw, md, xpathCurrent, xpathExclude, xpathInclude);
 
         // iterate through files, saving other material files for the end
-        List<FileMetadata> otherMatFiles = new ArrayList();
+        List<FileMetadata> otherMatFiles = new ArrayList<FileMetadata>();
         for (FileMetadata fmd : sv.getFileMetadatas()) {
             StudyFile sf = fmd.getStudyFile();
             if ( sf instanceof TabularDataFile ) {
@@ -1770,10 +1772,10 @@ public class DDIServiceBean implements DDIServiceLocal {
     // IMPORT METHODS
     //**********************
 
-    public Map mapDDI(String xmlToParse, StudyVersion studyVersion) {
+    public Map<String, FileMapEntry> mapDDI(String xmlToParse, StudyVersion studyVersion) {
         StringReader reader = null;
         XMLStreamReader xmlr = null;
-        Map filesMap = new HashMap();
+        Map<String, FileMapEntry> filesMap = new HashMap<String, FileMapEntry>();
         
                 
         try {
@@ -1793,10 +1795,10 @@ public class DDIServiceBean implements DDIServiceLocal {
         return filesMap;
     }
 
-    public Map mapDDI(File ddiFile, StudyVersion studyVersion, Boolean noSubsettables) {
+    public Map<String, FileMapEntry> mapDDI(File ddiFile, StudyVersion studyVersion, Boolean noSubsettables) {
         FileInputStream in = null;
         XMLStreamReader xmlr = null;
-        Map filesMap = new HashMap();
+        Map<String, FileMapEntry> filesMap = new HashMap<String, FileMapEntry>();
 
         try {
             in = new FileInputStream(ddiFile);
@@ -1821,10 +1823,10 @@ public class DDIServiceBean implements DDIServiceLocal {
         return filesMap;
     }
 
-    public Map reMapDDI(String xmlToParse, StudyVersion studyVersion, Map filesMap) {
+    public Map<Long, List<DataVariable>> reMapDDI(String xmlToParse, StudyVersion studyVersion, Map<String, FileMapEntry> filesMap) {
         StringReader reader = null;
         XMLStreamReader xmlr = null;
-        Map variablesMap;
+        Map<Long, List<DataVariable>> variablesMap;
 
         try {
             reader = new StringReader(xmlToParse);
@@ -1846,10 +1848,10 @@ public class DDIServiceBean implements DDIServiceLocal {
 
 
 
-    public Map reMapDDI(File ddiFile, StudyVersion studyVersion, Map filesMap) {
+    public Map<Long, List<DataVariable>> reMapDDI(File ddiFile, StudyVersion studyVersion, Map<String, FileMapEntry> filesMap) {
         FileInputStream in = null;
         XMLStreamReader xmlr = null;
-        Map variablesMap;
+        Map<Long, List<DataVariable>> variablesMap;
         
         if (ddiFile == null) {
             // re-map all the TabularFiles on the map as non-subsettable!
@@ -1882,7 +1884,7 @@ public class DDIServiceBean implements DDIServiceLocal {
     }
 
     // <editor-fold defaultstate="collapsed" desc="import methods">
-    private void processDDI( XMLStreamReader xmlr, StudyVersion studyVersion, Map filesMap, Boolean noSubsettables) throws XMLStreamException {
+    private void processDDI( XMLStreamReader xmlr, StudyVersion studyVersion, Map<String, FileMapEntry> filesMap, Boolean noSubsettables) throws XMLStreamException {
         initializeCollections(studyVersion); // not sure we need this call; to be investigated
         
         // make sure we have a codeBook
@@ -1921,8 +1923,8 @@ public class DDIServiceBean implements DDIServiceLocal {
 
     }
 
-     private Map processDDIdataSection( XMLStreamReader xmlr, StudyVersion studyVersion, Map filesMap) throws XMLStreamException {
-        Map variablesMap = null;
+     private Map<Long, List<DataVariable>> processDDIdataSection( XMLStreamReader xmlr, StudyVersion studyVersion, Map<String, FileMapEntry> filesMap) throws XMLStreamException {
+        Map<Long, List<DataVariable>> variablesMap = null;
 
         xmlr.nextTag();
         xmlr.require(XMLStreamConstants.START_ELEMENT, null, "codeBook");
@@ -1934,27 +1936,27 @@ public class DDIServiceBean implements DDIServiceLocal {
     private void initializeCollections(StudyVersion studyVersion) {
         // initialize the collections
         Metadata metadata = studyVersion.getMetadata();
-        metadata.getStudyVersion().getStudy().setStudyFiles( new ArrayList() );
-        metadata.setStudyAbstracts( new ArrayList() );
-        metadata.setStudyAuthors( new ArrayList() );
-        metadata.setStudyDistributors( new ArrayList() );
-        metadata.setStudyGeoBoundings(new ArrayList());
-        metadata.setStudyGrants(new ArrayList());
-        metadata.setStudyKeywords(new ArrayList());
-        metadata.setStudyNotes(new ArrayList());
-        metadata.setStudyOtherIds(new ArrayList());
-        metadata.setStudyOtherRefs(new ArrayList());
-        metadata.setStudyProducers(new ArrayList());
-        metadata.setStudyRelMaterials(new ArrayList());
-        metadata.setStudyRelPublications(new ArrayList());
-        metadata.setStudyRelStudies(new ArrayList());
-        metadata.setStudySoftware(new ArrayList());
-        metadata.setStudyTopicClasses(new ArrayList());
+        metadata.getStudyVersion().getStudy().setStudyFiles( new ArrayList<StudyFile>() );
+        metadata.setStudyAbstracts( new ArrayList<StudyAbstract>() );
+        metadata.setStudyAuthors( new ArrayList<StudyAuthor>() );
+        metadata.setStudyDistributors( new ArrayList<StudyDistributor>() );
+        metadata.setStudyGeoBoundings(new ArrayList<StudyGeoBounding>());
+        metadata.setStudyGrants(new ArrayList<StudyGrant>());
+        metadata.setStudyKeywords(new ArrayList<StudyKeyword>());
+        metadata.setStudyNotes(new ArrayList<StudyNote>());
+        metadata.setStudyOtherIds(new ArrayList<StudyOtherId>());
+        metadata.setStudyOtherRefs(new ArrayList<StudyOtherRef>());
+        metadata.setStudyProducers(new ArrayList<StudyProducer>());
+        metadata.setStudyRelMaterials(new ArrayList<StudyRelMaterial>());
+        metadata.setStudyRelPublications(new ArrayList<StudyRelPublication>());
+        metadata.setStudyRelStudies(new ArrayList<StudyRelStudy>());
+        metadata.setStudySoftware(new ArrayList<StudySoftware>());
+        metadata.setStudyTopicClasses(new ArrayList<StudyTopicClass>());
 
-        studyVersion.setFileMetadatas( new ArrayList() );
+        studyVersion.setFileMetadatas( new ArrayList<FileMetadata>() );
     }
 
-    private void processCodeBook( XMLStreamReader xmlr, StudyVersion studyVersion, Map filesMap, Boolean noSubsettables) throws XMLStreamException {
+    private void processCodeBook( XMLStreamReader xmlr, StudyVersion studyVersion, Map<String, FileMapEntry> filesMap, Boolean noSubsettables) throws XMLStreamException {
         Metadata metadata = studyVersion.getMetadata();
 
         for (int event = xmlr.next(); event != XMLStreamConstants.END_DOCUMENT; event = xmlr.next()) {
@@ -1983,9 +1985,9 @@ public class DDIServiceBean implements DDIServiceLocal {
         }
     }
 
-    private Map processCodeBookDataSection( XMLStreamReader xmlr, StudyVersion studyVersion, Map filesMap) throws XMLStreamException {
+    private Map<Long, List<DataVariable>> processCodeBookDataSection( XMLStreamReader xmlr, StudyVersion studyVersion, Map<String, FileMapEntry> filesMap) throws XMLStreamException {
         //Map filesMap = new HashMap();
-        Map variablesMap = null;
+        Map<Long, List<DataVariable>> variablesMap = null;
 
         for (int event = xmlr.next(); event != XMLStreamConstants.END_DOCUMENT; event = xmlr.next()) {
             if (event == XMLStreamConstants.START_ELEMENT) {
@@ -2628,7 +2630,7 @@ public class DDIServiceBean implements DDIServiceLocal {
 
     }
 
-    private void processFileDscr(XMLStreamReader xmlr, StudyVersion studyVersion, Map filesMap) throws XMLStreamException {
+    private void processFileDscr(XMLStreamReader xmlr, StudyVersion studyVersion, Map<String, FileMapEntry> filesMap) throws XMLStreamException {
         FileMetadata fmd = new FileMetadata();
         fmd.setStudyVersion(studyVersion);
         studyVersion.getFileMetadatas().add(fmd);
@@ -2687,11 +2689,13 @@ public class DDIServiceBean implements DDIServiceLocal {
 
                     fmd.setCategory(determineFileCategory(catName, icpsrDesc, icpsrId));
 
-
                     if (ddiFileId != null) {
-                        List filesMapEntry = new ArrayList();
-                        filesMapEntry.add(fmd);
-                        filesMapEntry.add(dt);
+                    	// FIXME: Lame and very wrong use of Lists as a data structure.
+                    	// This breaks the possibility of using generics in a good way.
+                    	FileMapEntry filesMapEntry = new FileMapEntry();
+//                        List<DataTable> filesMapEntry = new ArrayList<DataTable>();
+                        filesMapEntry.setFileMetadata(fmd);
+                        filesMapEntry.setDataTable(dt);
                         filesMap.put( ddiFileId, filesMapEntry);
                     }
 
@@ -2829,8 +2833,8 @@ public class DDIServiceBean implements DDIServiceLocal {
     }
      */
 
-    private Map processDataDscrForReal(XMLStreamReader xmlr, Map filesMap) throws XMLStreamException {
-        Map variableMap = new HashMap();
+    private Map<Long, List<DataVariable>> processDataDscrForReal(XMLStreamReader xmlr, Map<String, FileMapEntry> filesMap) throws XMLStreamException {
+        HashMap<Long, List<DataVariable>> variableMap = new HashMap<Long, List<DataVariable>>();
         //Map variableMapByTableId = new HashMap();
 
         for (int event = xmlr.next(); event != XMLStreamConstants.END_DOCUMENT; event = xmlr.next()) {
@@ -2842,7 +2846,7 @@ public class DDIServiceBean implements DDIServiceLocal {
                 if (xmlr.getLocalName().equals("dataDscr")) {
 
                     for (Object fileId : filesMap.keySet()) {
-                        List<DataVariable> variablesMapEntry = (List<DataVariable>) variableMap.get(fileId);
+                        List<DataVariable> variablesMapEntry = variableMap.get(fileId);
                         if (variablesMapEntry != null) {
                             // OK, this looks like we have found variables for this
                             // data file entry.
@@ -2949,11 +2953,11 @@ public class DDIServiceBean implements DDIServiceLocal {
     }
      */
 
-    private void processVarForReal(XMLStreamReader xmlr, Map filesMap, Map variableMap) throws XMLStreamException {
+    private void processVarForReal(XMLStreamReader xmlr, Map<String, FileMapEntry> filesMap, Map<Long, List<DataVariable>> variableMap) throws XMLStreamException {
         DataVariable dv = new DataVariable();
-        dv.setInvalidRanges(new ArrayList());
-        dv.setSummaryStatistics( new ArrayList() );
-        dv.setCategories( new ArrayList() );
+        dv.setInvalidRanges(new ArrayList<VariableRange>());
+        dv.setSummaryStatistics( new ArrayList<SummaryStatistic>() );
+        dv.setCategories( new ArrayList<VariableCategory>() );
         dv.setName( xmlr.getAttributeValue(null, "name") );
 
         try {
@@ -3047,7 +3051,7 @@ public class DDIServiceBean implements DDIServiceLocal {
     }
      */
 
-    private void processLocationForReal(XMLStreamReader xmlr, DataVariable dv, Map filesMap, Map variableMap) throws XMLStreamException {
+    private void processLocationForReal(XMLStreamReader xmlr, DataVariable dv, Map<String, FileMapEntry> filesMap, Map<Long, List<DataVariable>> variableMap) throws XMLStreamException {
 
         // fileStartPos, FileEndPos, and RecSegNo
         // if these fields don't convert to Long, just leave blank
@@ -3069,20 +3073,20 @@ public class DDIServiceBean implements DDIServiceLocal {
 
                 //DataTable filesMapEntry = (DataTable) filesMap.get( fileId );
 
-                List filesMapEntry = (List) filesMap.get( fileId );
+                FileMapEntry filesMapEntry = filesMap.get( fileId );
                 if (filesMapEntry != null) {
                     //FileMetadata fmd = (FileMetadata) filesMapEntry.get(0);
-                    DataTable dt = (DataTable) filesMapEntry.get(1);
+                    DataTable dt = filesMapEntry.getDataTable();
 
                     Long fileDbId = dt.getStudyFile().getId();
 
                     dv.setDataTable(dt);
 
                     if (variableMap.get(fileDbId) == null) {
-                        variableMap.put(fileDbId, new ArrayList());
+                        variableMap.put(fileDbId, new ArrayList<DataVariable>());
                     }
 
-                    List<DataVariable> variablesMapEntry = (List<DataVariable>) variableMap.get(fileDbId);
+                    List<DataVariable> variablesMapEntry = variableMap.get(fileDbId);
 
                     // fileOrder storeds the physical position of the variable
                     // in the file. We are operating under the assumption that
@@ -3615,8 +3619,8 @@ public class DDIServiceBean implements DDIServiceLocal {
         return citation;
     }
     
-    private Map parseDVNCitation(XMLStreamReader xmlr) throws XMLStreamException {
-        Map returnValues = new HashMap();
+    private Map<String, Comparable> parseDVNCitation(XMLStreamReader xmlr) throws XMLStreamException {
+        Map<String, Comparable> returnValues = new HashMap<String, Comparable>();
         
         while (true) {
             int event = xmlr.next();

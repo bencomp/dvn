@@ -103,7 +103,7 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
     private Study study;
     private StudyVersion studyVersion;
 
-    private List<StudyFileEditBean> fileList = new ArrayList();
+    private List<StudyFileEditBean> fileList = new ArrayList<StudyFileEditBean>();
 
     //private InputFile inputFile = null;
 
@@ -117,8 +117,6 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
     private boolean controlCardIngestInProgress = false;
 
 
-    private String sessionId; // used to generate temp files
-
     private Collection<SelectItem> fileCategories = null; //for the drop-down list of the html page
 
     // The selectItems (and groups) below are for the drop-down menu
@@ -127,10 +125,7 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
     // The [new!] list for the character encoding dropdown:
     private List<MenuItem> characterEncodings = null; 
         
-    private SelectItem[] fileTypesSubsettable;
-    private SelectItem[] fileTypesNetwork;
-
-    private List<String> preexistingLabels = new ArrayList(); // used for validation
+    private List<String> preexistingLabels = new ArrayList<String>(); // used for validation
     private List<String> currentLabels = new ArrayList<String>();// used for validation
     private int fileProgress; // TODO: file upload completed percent (Progress), currently not used!!!
     private HtmlDataTable filesDataTable = new HtmlDataTable();
@@ -164,14 +159,6 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
     public void setStudyVersion(StudyVersion studyVersion) {
         this.studyVersion = studyVersion;
     }
-
-    //public InputFile getInputFile() {
-    //    return inputFile;
-    //}
-
-    //public void setInputFile(InputFile f) {
-    //    inputFile = f;
-    //}
 
     public String getControlCardFilename () {
         return controlCardFilename;
@@ -262,7 +249,7 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
         }
 
         if (studyId != null) {
-            sessionId = FacesContext.getCurrentInstance().getExternalContext().getSession(false).toString();
+            FacesContext.getCurrentInstance().getExternalContext().getSession(false).toString();
             study = studyService.getStudy(studyId);
             studyVersion = study.getEditVersion();
 
@@ -285,7 +272,7 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
         dbgLog.fine("entering encoding listener");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         dbgLog.fine("encoding listener: got faces context");
-        Map params = facesContext.getExternalContext().getRequestParameterMap();
+        Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
         dbgLog.fine("encoding listener: got request parameter map");
         String encoding = (String) params.get("characterEncoding");
         if (encoding != null && encoding.length() > 0) {
@@ -300,9 +287,6 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
         
         FileEntry fe = (FileEntry)fileEvent.getComponent();
         FileEntryResults results = fe.getResults();
-        File parent = null;
-        StringBuilder m = null;
-
         for (FileEntryResults.FileInfo i : results.getFiles()) {
             //Note that the fileentry component has capabilities for 
             //simultaneous uploads of multiple files.
@@ -686,10 +670,12 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
         FileOutputStream tempOutStream = null;
         String unzipError = "";
         if (GzipUtils.isCompressedFilename(uploadedInputFile.getName())) {
+            GZIPInputStream zippedInput = null;
+            FileOutputStream unzippedOutput = null;
             try {
-                GZIPInputStream zippedInput = new GZIPInputStream(new FileInputStream(uploadedInputFile));
+				zippedInput = new GZIPInputStream(new FileInputStream(uploadedInputFile));
                 unzippedFile = new File(dir, "unzipped-file-" + UUID.randomUUID());
-                FileOutputStream unzippedOutput = new FileOutputStream(unzippedFile);
+				unzippedOutput = new FileOutputStream(unzippedFile);
                 byte[] dataBuffer = new byte[8192];
                 int i = 0;
                 while ((i = zippedInput.read(dataBuffer)) > 0) {
@@ -699,6 +685,17 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
                 tiStream = new TarArchiveInputStream(new FileInputStream(unzippedFile));
             } catch (Exception ex) {
                 unzipError = " A common gzip extension was found but is the file corrupt?";
+            } finally {
+            	try {
+					if (zippedInput != null) {
+						zippedInput.close();
+					}
+					if (unzippedOutput != null) {
+						unzippedOutput.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
             }
         } else if (BZip2Utils.isCompressedFilename(uploadedInputFile.getName())) {
             try {
@@ -1175,7 +1172,7 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
      */
     public Collection<SelectItem> getFileCategories() {
         if (fileCategories == null) {
-            fileCategories = new ArrayList(); 
+            fileCategories = new ArrayList<SelectItem>(); 
             for (String catName : studyVersion.getFileCategories()) {
                 fileCategories.add( new SelectItem(catName));
             }
@@ -1193,11 +1190,7 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
         dbgLog.fine("populating file types menu");
 
         if (fileTypes == null) {
-            fileTypes = new ArrayList();
-
-            fileTypesSubsettable = new SelectItem[7];
-            fileTypesNetwork = new SelectItem[1];
-            //fileTypesOther = new SelectItem[1];
+            fileTypes = new ArrayList<SelectItem>();
 
             fileTypes.add( new SelectItem("", "Choose a Data Type", "", true) );
 //            fileTypesSubsettable[0] = new SelectItem("por", "SPSS/POR");
@@ -1238,7 +1231,7 @@ public class AddFilesPage extends VDCBaseBean implements java.io.Serializable {
     // (as currently implemented) or defined dynamically, in the backing bean.
     //  -- L.A. 
     
-    public List getCharacterEncodings() {
+    public List<MenuItem> getCharacterEncodings() {
         if (characterEncodings == null) {
             characterEncodings = new ArrayList<MenuItem>(); 
             

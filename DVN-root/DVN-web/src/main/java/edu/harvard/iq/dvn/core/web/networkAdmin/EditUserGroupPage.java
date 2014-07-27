@@ -137,12 +137,12 @@ public class EditUserGroupPage extends VDCBaseBean implements java.io.Serializab
             UserGroup group = editUserGroupService.getUserGroup();
             group.getLoginDomains();
             elem.setUserGroup(group);
-            Collection loginDomains = new ArrayList();
+            Collection<LoginDomain> loginDomains = new ArrayList<LoginDomain>();
             loginDomains.add(elem);
             group.setLoginDomains(loginDomains);
         }
        if (userDetails==null || userDetails.size()==0) {
-            userDetails = new ArrayList();
+            userDetails = new ArrayList<UserDetailBean>();
             userDetails.add(new UserDetailBean());
        }
     }
