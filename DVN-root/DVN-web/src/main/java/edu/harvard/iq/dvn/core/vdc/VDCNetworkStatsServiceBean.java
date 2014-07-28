@@ -164,8 +164,8 @@ public class VDCNetworkStatsServiceBean implements VDCNetworkStatsServiceLocal {
                 
         // update the Lists stored in application scope
         List<VDCNetwork> vdcNetworks = vdcNetworkService.getVDCNetworks();        
-        Map<Long, List> downloadMap = new HashMap<Long, List>();
-        Map<Long, List> recentlyReleasedMap = new HashMap<Long, List>();
+        Map<Long, List<Long>> downloadMap = new HashMap<Long, List<Long>>();
+        Map<Long, List<Long>> recentlyReleasedMap = new HashMap<Long, List<Long>>();
         
         for (VDCNetwork vdcNetwork : vdcNetworks){
             downloadMap.put(vdcNetwork.getId(), studyService.getMostDownloadedStudyIds(null, vdcNetwork.getId(), -1)); 

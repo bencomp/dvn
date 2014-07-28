@@ -1144,7 +1144,7 @@ public class AnalysisPage extends VDCBaseBean implements java.io.Serializable {
             // D
             DvnRJobRequest sro = null;
              
-            List<File> zipFileList = new ArrayList();
+            List<File> zipFileList = new ArrayList<File>();
             
             File tmpsbfl= null;
             
