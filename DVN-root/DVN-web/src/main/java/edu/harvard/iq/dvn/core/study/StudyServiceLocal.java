@@ -224,9 +224,9 @@ public interface StudyServiceLocal extends java.io.Serializable {
 
     public List<MetadataFormatType> findAllMetadataExportFormatTypes();
 
-    public List<?> getMostDownloadedStudyIds(Long vdcId, Long vdcNetworkId, int numResults);
+    public List<Long> getMostDownloadedStudyIds(Long vdcId, Long vdcNetworkId, int numResults);
 
-    public List<?> getRecentlyReleasedStudyIds(Long vdcId, Long vdcNetworkId, int numResults);
+    public List<Long> getRecentlyReleasedStudyIds(Long vdcId, Long vdcNetworkId, int numResults);
     
     public void determineStudiesFromFiles(List<Long> studyFiles, List<Long> studies, Map<Long, List<StudyFile>> fileMap); 
     

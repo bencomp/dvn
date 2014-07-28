@@ -760,7 +760,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         List<VDCNetwork> subNetworks = vdcNetworkService.getVDCNetworksOrderedById(); 
         
         if (subNetworks != null) {
-            ArrayList subNetworksArray = new ArrayList <VDCNetwork>(); 
+            ArrayList<VDCNetwork> subNetworksArray = new ArrayList <VDCNetwork>(); 
 
             
             for (int i = 0; i < subNetworks.size(); i++) {
@@ -856,13 +856,13 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         return matchingStudyIds;
     }
 
-    public List search(VDC vdc, List<VDCCollection> searchCollections, List<SearchTerm> searchTerms) {
+    public List<Long> search(VDC vdc, List<VDCCollection> searchCollections, List<SearchTerm> searchTerms) {
         Indexer indexer = Indexer.getInstance();
         List<Long> studyIds = getStudiesforCollections(searchCollections);
         
-        List matchingStudyIds = null;
+        List<Long> matchingStudyIds = null;
         if (studyIds.isEmpty()) {
-            matchingStudyIds = new ArrayList();
+            matchingStudyIds = new ArrayList<Long>();
         } else {
             try {
                 matchingStudyIds = indexer.search(studyIds, searchTerms);
@@ -873,17 +873,17 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         return matchingStudyIds;
     }
 
-    public List search(VDC vdc, List<SearchTerm> searchTerms) {
-        List studyIds = vdc != null ? listVdcStudyIds(vdc) : null;
+    public List<Long> search(VDC vdc, List<SearchTerm> searchTerms) {
+        List<Long> studyIds = vdc != null ? listVdcStudyIds(vdc) : null;
 
         Indexer indexer = Indexer.getInstance();
-        List matchingStudyIds = null;
+        List<Long> matchingStudyIds = null;
         try {
             matchingStudyIds = indexer.search(studyIds, searchTerms);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        return matchingStudyIds == null ? new ArrayList() : matchingStudyIds;
+        return matchingStudyIds == null ? new ArrayList<Long>() : matchingStudyIds;
     }
     
     public ResultsWithFacets searchNew(DvnQuery dvnQuery) {
@@ -937,8 +937,8 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         return indexer.andQueryClause(searchParts);
     }
 
-    private List listVdcStudyIds(final VDC vdc) {
-        List studyIds = new ArrayList();
+    private List<Long> listVdcStudyIds(final VDC vdc) {
+        List<Long> studyIds = new ArrayList<Long>();
 
         if (vdc != null) {
             studyIds.addAll(collService.getStudyIds(vdc.getRootCollection()));
@@ -990,8 +990,8 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
     * */
 
     public List searchVariables(VDC vdc, SearchTerm searchTerm) {
-        List studyIds = vdc != null ? listVdcStudyIds(vdc) : null;
-        List<Long> matchingStudyIds = new ArrayList();
+        List<Long> studyIds = vdc != null ? listVdcStudyIds(vdc) : null;
+        List<Long> matchingStudyIds = new ArrayList<Long>();
 
         Indexer indexer = Indexer.getInstance();
         List matchingVarIds = null;
@@ -1021,29 +1021,29 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         return matchingStudyIds;
     }
 
-    public List searchVariables(List studyIds, SearchTerm searchTerm) {
+    public List<Long> searchVariables(List<Long> studyIds, SearchTerm searchTerm) {
 
         Indexer indexer = Indexer.getInstance();
-        List matchingStudyIds = null;
+        List<Long> matchingStudyIds = null;
         try {
             matchingStudyIds = indexer.searchVariables(studyIds, searchTerm);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        return matchingStudyIds == null ? new ArrayList() : matchingStudyIds;
+        return matchingStudyIds == null ? new ArrayList<Long>() : matchingStudyIds;
     }
 
     public List <Long> searchVersionUnf(VDC vdc, String unf){
-        List studyIds = vdc != null ? listVdcStudyIds(vdc) : null;
+        List<Long> studyIds = vdc != null ? listVdcStudyIds(vdc) : null;
 
         Indexer indexer = Indexer.getInstance();
-        List matchingStudyIds = null;
+        List<Long> matchingStudyIds = null;
         try {
             matchingStudyIds = indexer.searchVersionUnf(studyIds, unf);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        return matchingStudyIds == null ? new ArrayList() : matchingStudyIds;
+        return matchingStudyIds == null ? new ArrayList<Long>() : matchingStudyIds;
     }
 
     public List query(String adhocQuery) {
@@ -1065,14 +1065,14 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
         } else {
             logger.fine("getUnindexedStudies(), no studies found.");
         }
-        return new HashSet(studies);
+        return new HashSet<Study>(studies);
     }
 
     public void indexBatch() {
         long ioProblemCount = 0;
         boolean ioProblem = false;
-        HashSet s = getUnindexedStudies();
-        for (Iterator it = s.iterator(); it.hasNext();) {
+        HashSet<Study> s = getUnindexedStudies();
+        for (Iterator<Study> it = s.iterator(); it.hasNext();) {
             Study study = (Study) it.next();
             try {
                 addDocument(study.getId().longValue());
@@ -1086,7 +1086,7 @@ public class IndexServiceBean implements edu.harvard.iq.dvn.core.index.IndexServ
     }
     
     private List<Long> getStudiesforCollections(List<VDCCollection> searchCollections) {
-        List<Long> studyIds = new ArrayList();
+        List<Long> studyIds = new ArrayList<Long>();
         
         for (VDCCollection coll : searchCollections) {
             studyIds.addAll( collService.getStudyIds( coll  ) );

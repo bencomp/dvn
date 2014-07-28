@@ -73,7 +73,7 @@ public interface IndexServiceLocal extends java.io.Serializable {
 
     public List searchVariables(VDC vdc, SearchTerm searchTerm);
 
-    public List searchVariables(List studyIds, SearchTerm searchTerm);
+    public List<Long> searchVariables(List<Long> studyIds, SearchTerm searchTerm);
 
     public List searchVariables(VDC vdc, List<VDCCollection> searchCollections, SearchTerm searchTerm);
 

@@ -462,7 +462,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
     }
     
     private String verifyControlledVocabValues(TemplateField tfIn){
-        List <String> studyFieldValues = new ArrayList();
+        List <String> studyFieldValues = new ArrayList<String>();
         StudyField studyField = new StudyField();
         if (tfIn.getStudyField().isCustomField()){
             for (StudyField sf : metadata.getStudyFields()) {
@@ -1449,7 +1449,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
    
 
     private List<TemplateField> getStudyMapTemplateFields(String... fieldNames) {
-        List templateFieldList = new ArrayList();
+        List<TemplateField> templateFieldList = new ArrayList<TemplateField>();
         
         for (String fieldName : fieldNames) {
             if (((StudyMapValue) getStudyMap().get(fieldName))!=null) {
@@ -1462,7 +1462,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
     }
     
     private List<TemplateField> getCustomTemplateFields() {
-        List customFieldList = new ArrayList();
+        List<TemplateField> customFieldList = new ArrayList<TemplateField>();
         for (TemplateField tf : study.getTemplate().getTemplateFields()) {
             if (tf.getStudyField().isCustomField()) {
                 customFieldList.add(tf);
@@ -1818,9 +1818,9 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
     private List<SelectItem> fileCategoriesItems = null;
     
     
-    public List getFileCategoryItems() {
+    public List<SelectItem> getFileCategoryItems() {
         if (fileCategoriesItems == null) {
-            fileCategoriesItems = new ArrayList();
+            fileCategoriesItems = new ArrayList<SelectItem>();
             for (String catName : editStudyService.getStudyVersion().getFileCategories()) {
                 fileCategoriesItems.add( new SelectItem(catName));
             }
@@ -3650,7 +3650,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
         this.filesDataTable = filesDataTable;
     }
     public DataModel<Object[]> getCustomFieldsDataModel() {
-        List values = new ArrayList(); 
+        List<Object[]> values = new ArrayList<Object[]>(); 
         
         for (int i = 0; i < study.getTemplate().getTemplateFields().size(); i++) {
             TemplateField templateField = study.getTemplate().getTemplateFields().get(i);
@@ -3674,7 +3674,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
             
         }        
         
-        return new ListDataModel(values);
+        return new ListDataModel<Object[]>(values);
     }
     
     private PanelSeries customFieldsPanelSeries;
@@ -3687,8 +3687,8 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
         this.customFieldsPanelSeries = customFieldsPanelSeries;
     }
 
-    private DataModel getCustomValuesDataModel(StudyField studyField) {
-        List values = new ArrayList();   
+    private DataModel<Object[]> getCustomValuesDataModel(StudyField studyField) {
+        List<Object[]> values = new ArrayList<Object[]>();   
         
         for (StudyFieldValue sfv : studyField.getStudyFieldValues()) {
             Object[] row = new Object[2];
@@ -3697,7 +3697,7 @@ public class EditStudyPage extends VDCBaseBean implements java.io.Serializable  
             values.add(row);
         }
                 
-        return new ListDataModel(values);
+        return new ListDataModel<Object[]>(values);
     }
   
 }

@@ -556,7 +556,7 @@ public class DataverseGrouping extends SortableList {
           return xtraItems;
      }
 
-   public void setXtraItems(ArrayList xtraitems) {
+   public void setXtraItems(ArrayList<DataverseGrouping> xtraitems) {
        this.xtraItems = xtraitems;
    }
 

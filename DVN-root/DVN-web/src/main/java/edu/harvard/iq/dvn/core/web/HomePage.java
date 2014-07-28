@@ -47,6 +47,7 @@ import java.io.Serializable;
 import java.lang.String;
 import java.text.NumberFormat;
 import java.util.*;
+
 import javax.ejb.EJB;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -78,13 +79,13 @@ public class HomePage extends VDCBaseBean implements Serializable {
     
 
     //Objects
-    private ArrayList accordionItemBeans;
+    private ArrayList<DataverseGrouping> accordionItemBeans;
     private HtmlDataTable dataverseList = new HtmlDataTable();
     private HtmlInputHidden hiddenGroupId = new HtmlInputHidden();
     private HtmlInputHidden hiddenAlphaCharacter = new HtmlInputHidden();
     List descendants                = new ArrayList();
-    private List recentStudies;
-    private List mostDownloadedStudies;
+    private List<StudyUI> recentStudies;
+    private List<StudyUI> mostDownloadedStudies;
     private Long groupId;
     private String defaultVdcPath;
     private String groupName;
@@ -105,8 +106,7 @@ public class HomePage extends VDCBaseBean implements Serializable {
     public HomePage() {
     }
 
-     @SuppressWarnings("unchecked")
-    public void init() {
+     public void init() {
         super.init();
 
         if (getVDCRequestBean().getCurrentVdcNetwork() != null ){
@@ -160,7 +160,7 @@ public class HomePage extends VDCBaseBean implements Serializable {
     
     
     private void initSubnetworks(){        
-        vdcSubnetworks = new ArrayList();     
+        vdcSubnetworks = new ArrayList<VDCNetworkUI>();     
         List <VDCNetwork> vdcSubnetworkList = vdcNetworkService.getVDCSubNetworks();
         for (VDCNetwork vdcNetwork: vdcSubnetworkList){
             VDCNetworkUI vdcNetworkUI = new VDCNetworkUI();
@@ -184,7 +184,7 @@ public class HomePage extends VDCBaseBean implements Serializable {
         msg = (StatusMessage) getRequestMap().get("statusMessage");
     }
     //DEBUG -- new way to get at VDCS
-    private ArrayList vdcUI;
+    private ArrayList<VDCUI> vdcUI;
     private VDCUIList vdcUIList;
     private VDCUIList vdcUIListDownloaded;
     private VDCUIList vdcUIListReleased;
@@ -361,7 +361,7 @@ public class HomePage extends VDCBaseBean implements Serializable {
         if (accordionItemBeans != null) {
             accordionItemBeans.clear();
         } else {
-            accordionItemBeans = new ArrayList();
+            accordionItemBeans = new ArrayList<DataverseGrouping>();
         }
 
         List<VDCGroup> list = (List<VDCGroup>) vdcGroupService.findAll();
@@ -413,7 +413,7 @@ public class HomePage extends VDCBaseBean implements Serializable {
                 if (!vdcGroupService.findByParentId(group.getId()).isEmpty()) {
                     List<VDCGroup> innerlist = vdcGroupService.findByParentId(group.getId());
                     DataverseGrouping xtraItem;
-                    childItem.setXtraItems(new ArrayList());
+                    childItem.setXtraItems(new ArrayList<DataverseGrouping>());
                     for (VDCGroup innerGroup : innerlist){
                         numDVs = vdcGroupService.findCountVDCsByVDCGroupIdSubnetworkId(innerGroup.getId(), networkId);
                         if (numDVs > 0) {
@@ -431,7 +431,7 @@ public class HomePage extends VDCBaseBean implements Serializable {
      
   //getters
 
-    public ArrayList getAccordionItemBeans() {
+    public ArrayList<DataverseGrouping> getAccordionItemBeans() {
         return accordionItemBeans;
     }
 
@@ -473,28 +473,28 @@ public class HomePage extends VDCBaseBean implements Serializable {
 
      @Inject VDCApplicationBean vdcApplicationBean;
      
-     public List getRecentStudies() {
+     public List<StudyUI> getRecentStudies() {
         if (recentStudies == null) {            
             recentStudies = filterVisibleStudyUIsFromIds( vdcApplicationBean.getAllStudyIdsByReleaseDate(vdcNetworkId), 5 ); 
         }
         return recentStudies;
     }
      
-    public List getMostDownloadedStudies() {
+    public List<StudyUI> getMostDownloadedStudies() {
         if (mostDownloadedStudies == null) {
             mostDownloadedStudies = filterVisibleStudyUIsFromIds( vdcApplicationBean.getAllStudyIdsByDownloadCount(vdcNetworkId), 5 ); 
         }
         return mostDownloadedStudies;
     }
     
-    public List getMostDownloadedDVs(){
-        List mostDownloaded = new ArrayList();
+    public List<VDCUI> getMostDownloadedDVs(){
+        List<VDCUI> mostDownloaded = new ArrayList<VDCUI>();
         if (vdcUIListDownloaded == null){
            vdcUIListDownloaded = new VDCUIList(groupId, (String)hiddenAlphaCharacter.getValue(), true, "Activity");
         }
         if (!vdcUIListDownloaded.getVdcUIList().isEmpty()){
             int count = 0;
-            Iterator iter = vdcUIListDownloaded.getVdcUIList().iterator();
+            Iterator<VDCUI> iter = vdcUIListDownloaded.getVdcUIList().iterator();
             while (iter.hasNext()) {
                 VDCUI vdcUI = (VDCUI) iter.next();
                 mostDownloaded.add(vdcUI);
@@ -506,12 +506,12 @@ public class HomePage extends VDCBaseBean implements Serializable {
         return mostDownloaded;
     }
     
-    public List getMostRecentlyReleasedDVs(){
-        List mostRecentlyReleased = new ArrayList();
+    public List<VDCUI> getMostRecentlyReleasedDVs(){
+        List<VDCUI> mostRecentlyReleased = new ArrayList<VDCUI>();
 
         if (!vdcUIListReleased.getVdcUIList().isEmpty()){
             int count = 0;
-            Iterator iter = vdcUIListReleased.getVdcUIList().iterator();
+            Iterator<VDCUI> iter = vdcUIListReleased.getVdcUIList().iterator();
             while (iter.hasNext()) {
                 VDCUI vdcUI = (VDCUI) iter.next();
 
@@ -525,8 +525,8 @@ public class HomePage extends VDCBaseBean implements Serializable {
     }
 
 
-    private List filterVisibleStudyUIsFromIds(List<Long> originalStudies, int numResults) {
-        List filteredStudies = new ArrayList();
+    private List<StudyUI> filterVisibleStudyUIsFromIds(List<Long> originalStudies, int numResults) {
+        List<StudyUI> filteredStudies = new ArrayList<StudyUI>();
         if (numResults != 0) {
             int count = 0;
             for (Long studyId : originalStudies) //create studyUI with study id instead of getting study here.

@@ -254,9 +254,9 @@ public class EditStudyFilesPage extends VDCBaseBean implements java.io.Serializa
 private List<SelectItem> fileCategoriesItems = null;
 
 
-    public List getFileCategoryItems() {
+    public List<SelectItem> getFileCategoryItems() {
         if (fileCategoriesItems == null) {
-            fileCategoriesItems = new ArrayList();
+            fileCategoriesItems = new ArrayList<SelectItem>();
             for (String catName : editStudyFilesService.getStudyVersion().getFileCategories()) {
                 fileCategoriesItems.add( new SelectItem(catName));
             }
@@ -265,9 +265,9 @@ private List<SelectItem> fileCategoriesItems = null;
         return fileCategoriesItems;
     }
 
-    private List validationFileNames = new ArrayList();
+    private List<String> validationFileNames = new ArrayList<String>();
     
-    public List getValidationFileNames() {
+    public List<String> getValidationFileNames() {
         return validationFileNames;
     }
 
@@ -298,7 +298,7 @@ private List<SelectItem> fileCategoriesItems = null;
             errorMessage = "cannot contain any of the following characters: \\ / : * ? \" < > | ; #";
 
         } else if (validationFileNames.subList(0, rowIndex).contains(fileName)) { // check versus current list
-            errorMessage = errorMessage = "must be unique.";
+            errorMessage = "must be unique.";
         }
 
 

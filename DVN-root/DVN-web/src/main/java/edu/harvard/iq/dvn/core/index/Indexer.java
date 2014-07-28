@@ -844,7 +844,7 @@ public class Indexer implements java.io.Serializable  {
         }
     }
 
-    public List search(List <Long> studyIds, List <SearchTerm> searchTerms) throws IOException{
+    public List<Long> search(List <Long> studyIds, List <SearchTerm> searchTerms) throws IOException{
         logger.fine("Start search: "+DateTools.dateToString(new Date(), Resolution.MILLISECOND));
         Long[] studyIdsArray = null;
         if (studyIds != null) {
@@ -852,7 +852,7 @@ public class Indexer implements java.io.Serializable  {
             Arrays.sort(studyIdsArray);
         }
         List <Long> results = null;
-        List <BooleanQuery> searchParts = new ArrayList();
+        List <BooleanQuery> searchParts = new ArrayList<BooleanQuery>();
        
         // "study-level search" is our "normal", default search, that is 
         // performed on the study metadata keywords.
@@ -871,11 +871,11 @@ public class Indexer implements java.io.Serializable  {
         boolean fileLevelSearch = false; 
 
         
-        List <SearchTerm> studyLevelSearchTerms = new ArrayList();
-        List <SearchTerm> variableSearchTerms = new ArrayList();
-        List <SearchTerm> fileMetadataSearchTerms = new ArrayList();
+        List <SearchTerm> studyLevelSearchTerms = new ArrayList<SearchTerm>();
+        List <SearchTerm> variableSearchTerms = new ArrayList<SearchTerm>();
+        List <SearchTerm> fileMetadataSearchTerms = new ArrayList<SearchTerm>();
         
-        for (Iterator it = searchTerms.iterator(); it.hasNext();){
+        for (Iterator<SearchTerm> it = searchTerms.iterator(); it.hasNext();){
             SearchTerm elem = (SearchTerm) it.next();
             logger.fine("INDEXER: processing term; name="+elem.getFieldName()+"; value="+elem.getValue());
             if (elem.getFieldName().equals("variable")){
@@ -1207,7 +1207,7 @@ public class Indexer implements java.io.Serializable  {
     }
     */
 
-    public List searchVariables(List <Long> studyIds,SearchTerm searchTerm) throws IOException {
+    public List<Long> searchVariables(List <Long> studyIds,SearchTerm searchTerm) throws IOException {
         BooleanQuery indexQuery = null;
         BooleanQuery searchQuery = new BooleanQuery();
         BooleanQuery.setMaxClauseCount(dvnMaxClauseCount);
@@ -1233,13 +1233,13 @@ public class Indexer implements java.io.Serializable  {
         return finalResults;
     }
 
-    public List searchVariables(List<Long> studyIds, List<SearchTerm> searchTerms, boolean varIdReturnValues) throws IOException {
+    public List<Long> searchVariables(List<Long> studyIds, List<SearchTerm> searchTerms, boolean varIdReturnValues) throws IOException {
         BooleanQuery searchQuery = new BooleanQuery();
         BooleanQuery.setMaxClauseCount(dvnMaxClauseCount);
         if (studyIds != null) {
             searchQuery.add(orIdSearchTermClause(studyIds, "varStudyId"), BooleanClause.Occur.MUST);
         }
-        for (Iterator it = searchTerms.iterator(); it.hasNext();) {
+        for (Iterator<SearchTerm> it = searchTerms.iterator(); it.hasNext();) {
             SearchTerm elem = (SearchTerm) it.next();
             BooleanQuery indexQuery = null;
             if (elem.getFieldName().equalsIgnoreCase("variable")) {
@@ -1273,13 +1273,13 @@ public class Indexer implements java.io.Serializable  {
      * -- L.A. 
      **/ 
     
-    public List searchFileMetadata(List<Long> studyIds, List<SearchTerm> searchTerms, boolean fileIdReturnValues) throws IOException {
+    public List<Long> searchFileMetadata(List<Long> studyIds, List<SearchTerm> searchTerms, boolean fileIdReturnValues) throws IOException {
         BooleanQuery searchQuery = new BooleanQuery();
         BooleanQuery.setMaxClauseCount(dvnMaxClauseCount);
         if (studyIds != null) {
             searchQuery.add(orIdSearchTermClause(studyIds, "id"), BooleanClause.Occur.MUST);
         }
-        for (Iterator it = searchTerms.iterator(); it.hasNext();) {
+        for (Iterator<SearchTerm> it = searchTerms.iterator(); it.hasNext();) {
             SearchTerm elem = (SearchTerm) it.next();
             BooleanQuery indexQuery = null;
             // Determine if this is a file-level metadata search term:
@@ -1437,7 +1437,7 @@ public class Indexer implements java.io.Serializable  {
     }
 
  
-    private List getHitIds( Query query) throws IOException {
+    private List<Long> getHitIds( Query query) throws IOException {
         ArrayList matchIds = new ArrayList();
         LinkedHashSet matchIdsSet = new LinkedHashSet();
         if (query != null){
@@ -1583,7 +1583,7 @@ public class Indexer implements java.io.Serializable  {
     // the ids of the variables, the other - of the corresponding studies. 
     // -- L.A. 
     
-    private List getVariableHitIds(List <Document> hits) throws IOException {
+    private List<Long> getVariableHitIds(List <Document> hits) throws IOException {
         ArrayList matchIds = new ArrayList();
         LinkedHashSet matchIdsSet = new LinkedHashSet();
         for (Iterator it = hits.iterator(); it.hasNext();){
@@ -1599,7 +1599,7 @@ public class Indexer implements java.io.Serializable  {
 
     /* returns studyIds for variable query
      */
-    private List getVariableHitStudyIds( Query query) throws IOException {
+    private List<Long> getVariableHitStudyIds( Query query) throws IOException {
         ArrayList matchIds = new ArrayList();
         LinkedHashSet matchIdsSet = new LinkedHashSet();
         if (query != null){

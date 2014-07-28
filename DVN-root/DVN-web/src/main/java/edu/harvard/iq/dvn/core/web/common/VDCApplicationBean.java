@@ -139,19 +139,19 @@ public class VDCApplicationBean extends VDCBaseBean implements java.io.Serializa
     @EJB StudyServiceLocal studyService;
 
 
-    private Map<Long, List> allStudyIdsByDownloadCountMap = new HashMap();
-    private Map<Long, List> allStudyIdsByReleaseDateMap = new HashMap(); 
+    private Map<Long, List<Long>> allStudyIdsByDownloadCountMap = new HashMap<Long, List<Long>>();
+    private Map<Long, List<Long>> allStudyIdsByReleaseDateMap = new HashMap<Long, List<Long>>(); 
 
-    public void setAllStudyIdsByDownloadCountMap(Map<Long, List> allStudyIdsByDownloadCountMap) {
+    public void setAllStudyIdsByDownloadCountMap(Map<Long, List<Long>> allStudyIdsByDownloadCountMap) {
         this.allStudyIdsByDownloadCountMap = allStudyIdsByDownloadCountMap;
     }
 
-    public void setAllStudyIdsByReleaseDateMap(Map<Long, List> allStudyIdsByReleaseDateMap) {
+    public void setAllStudyIdsByReleaseDateMap(Map<Long, List<Long>> allStudyIdsByReleaseDateMap) {
         this.allStudyIdsByReleaseDateMap = allStudyIdsByReleaseDateMap;
     }
   
         
-    public List getAllStudyIdsByDownloadCount(Long vdcNetworkId) {
+    public List<Long> getAllStudyIdsByDownloadCount(Long vdcNetworkId) {
         if (allStudyIdsByDownloadCountMap.get(vdcNetworkId) == null) {
             allStudyIdsByDownloadCountMap.put(vdcNetworkId, studyService.getMostDownloadedStudyIds(null, vdcNetworkId, -1));
         }
@@ -160,7 +160,7 @@ public class VDCApplicationBean extends VDCBaseBean implements java.io.Serializa
 
     
 
-    public List getAllStudyIdsByReleaseDate(Long vdcNetworkId) {
+    public List<Long> getAllStudyIdsByReleaseDate(Long vdcNetworkId) {
         if (allStudyIdsByReleaseDateMap.get(vdcNetworkId) == null) {
             allStudyIdsByReleaseDateMap.put(vdcNetworkId, studyService.getRecentlyReleasedStudyIds(null, vdcNetworkId, -1));
         }
