@@ -42,7 +42,7 @@ public class GuestBookResponseServiceBean {
     private EntityManager em; 
     
     public List<GuestBookResponse> findAll() {
-        return em.createQuery("select object(o) from GuestBookResponse as o order by o.responseTime desc").getResultList();
+        return em.createQuery("select object(o) from GuestBookResponse as o order by o.responseTime desc", GuestBookResponse.class).getResultList();
     }
     
     public List<Long> findAllIds() {
@@ -151,6 +151,12 @@ public class GuestBookResponseServiceBean {
         return query.getResultList();
     }
     
+    /**
+     * Convert the integer at position `index` in each Object[] to a Long
+     * @param list a list of object arrays
+     * @param index the index of the Integer in the Object array
+     * @return the updated list of object arrays
+     */
     private List<Object[]> convertIntegerToLong(List<Object[]> list, int index) {
         for (Object[] item : list) {
             item[index] = new Long( (Integer) item[index]);

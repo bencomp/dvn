@@ -30,10 +30,15 @@ import edu.harvard.iq.dvn.core.admin.UserServiceLocal;
 import edu.harvard.iq.dvn.core.admin.VDCUser;
 import edu.harvard.iq.dvn.core.vdc.VDCNetworkServiceLocal;
 import edu.harvard.iq.dvn.core.web.common.VDCBaseBean;
+
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.ejb.EJB;
+
 import com.icesoft.faces.component.ext.HtmlInputHidden;
+
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -225,8 +230,8 @@ public class LoginPage extends VDCBaseBean implements java.io.Serializable  {
     private SelectItem[] affiliateNames;
 
     private void setAffiliateNames() {
-        List list = (List) groupService.findAllLoginAffiliates();
-        Iterator iterator = list.iterator();
+        Collection<LoginAffiliate> list = groupService.findAllLoginAffiliates();
+        Iterator<LoginAffiliate> iterator = list.iterator();
         affiliateNames = new SelectItem[(list.size() + 1)];
         int i = 0;
         while (iterator.hasNext()) {
