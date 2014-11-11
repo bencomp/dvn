@@ -16,7 +16,7 @@
    Dataverse Network - A web application to share, preserve and analyze research data.
    Developed at the Institute for Quantitative Social Science, Harvard University.
    Version 3.0.
-*/
+ */
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -69,19 +69,19 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
         clearWorkflowState();
         return "/login/LoginPage?faces-redirect=true";
     }
-    
+
     public String beginFileAccessWorkflow(Long studyId) {
         clearWorkflowState();
         workflowType="fileAccess"; 
         this.studyId=studyId;
-          String nextPage =  null;
-          LoginBean loginBean = this.getVDCSessionBean().getLoginBean();
+        String nextPage =  null;
+        LoginBean loginBean = this.getVDCSessionBean().getLoginBean();
         if (loginBean == null) {
             nextPage = "/login/FileRequestAccountPage?faces-redirect=true" + getContextSuffix();
         } else {
             nextPage = "/login/FileRequestPage?faces-redirect=true&studyId="+studyId + getContextSuffix(); 
         }
-  
+
         return nextPage;
     }
 
@@ -92,8 +92,8 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
         String nextPage = "/login/AddAccountPage?faces-redirect=true";
         return nextPage;
     }
-    
-    
+
+
     public String beginCreatorWorkflow() {
         clearWorkflowState();
         workflowType = WORKFLOW_TYPE_CREATOR;
@@ -105,12 +105,12 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
             loginBean.setUser(user); // user may have been modified by call to grantWorkflowPermission
             nextPage = "/site/AddSitePage?faces-redirect=true&" + getContextSuffix();
         } else {
-         
+
             nextPage = "/login/AddAccountPage?faces-redirect=true";
         }
         return nextPage;
     }
-    
+
     public String beginContributorWorkflow() {
         clearWorkflowState();
         workflowType = this.WORKFLOW_TYPE_CONTRIBUTOR;
@@ -126,7 +126,7 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
         }
         return nextPage;
     }
-      
+
 
     public String beginLoginCreatorWorkflow() {
         clearWorkflowState();
@@ -135,11 +135,11 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
         return nextPage;
 
     }
-    
+
     public String beginLoginContributorWorkflow() {
         clearWorkflowState();
         workflowType =   WORKFLOW_TYPE_CONTRIBUTOR;
- 
+
         String nextPage = "/login/LoginPage?faces-redirect=true";
         return nextPage;
 
@@ -161,7 +161,7 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
         if (user.isAgreedTermsOfUse() || !vdcNetworkService.find().isTermsOfUseEnabled()) {
             nextPage = updateSessionAndRedirect();
         } else {
-            
+
             nextPage = "/login/AccountTermsOfUsePage?faces-redirect=true";
         }
         return nextPage;
@@ -191,7 +191,7 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
 
     public String processTermsOfUse(boolean termsAccepted) {
         String forward = "/HomePage?faces-redirect=true";
-        
+
         if (user != null) {
             if (termsAccepted) {
                 userService.setAgreedTermsOfUse(user.getId(), termsAccepted);
@@ -207,10 +207,10 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
     private String updateSessionAndRedirect() {
         updateSessionForLogin();
         return setLoginRedirect();
-     
+
     }
-    
-   
+
+
     /**
      *  Create loginBean and add it to the Session, do other session-related updates.
      * @param session
@@ -218,7 +218,7 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
      * @param vdcSessionBean
      * @param user
      */
-    
+
     private void updateSessionForLogin() {
         //first remove any existing ipUserGroup info from the session
         ExternalContext externalContext = getExternalContext();
@@ -244,38 +244,41 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
         vdcSessionBean.getTermsfUseMap().clear();
         // clear the studylistings from prelogin
         StudyListing.clearStudyListingMap(sessionMap);
-     }
-    
-     public void clearWorkflowState() {
-         workflowType=null;
-         user=null;
-         studyId=null;
-     }
-    
-     private void grantWorkflowPermission() {
+    }
+
+    /**
+     * Clear workflow type, user and study ID
+     */
+    public void clearWorkflowState() {
+        workflowType=null;
+        user=null;
+        studyId=null;
+    }
+
+    private void grantWorkflowPermission() {
         if (workflowType!=null) {
             if (workflowType.equals(WORKFLOW_TYPE_CREATOR)) {
-                  userService.makeCreator(user.getId());
+                userService.makeCreator(user.getId());
             } 
             else if (workflowType.equals(WORKFLOW_TYPE_CONTRIBUTOR)) {
                 // this workflow no longer makes the contributor immediately (it is used to create an account);
                 // instead the user will become a contributor when they make an actual contribution
-                  
+
             } else if  (workflowType.equals(WORKFLOW_TYPE_FILE_ACCESS)) {
                 // give study file permission
             }
             // Update detached user object with updated user from database
             user = userService.find(user.getId());
-        
+
         }
     }
 
     private String setLoginRedirect() {
         Map sessionMap = getSessionMap();
         VDC currentVDC = getVDCRequestBean().getCurrentVDC();
-        
+
         String redirectString = "";
-         
+
         if (WORKFLOW_TYPE_CONTRIBUTOR.equals(workflowType)) {
             redirectString = "/login/ContributorRequestSuccessPage.xhtml";
         } else if (WORKFLOW_TYPE_CREATOR.equals(workflowType)) {
@@ -296,7 +299,7 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
                 }
             }
         }
-        
+
         boolean hasParams = redirectString.indexOf("?") != -1;
         redirectString += (hasParams ? "&" : "?") + "faces-redirect=true" + getContextSuffix();
         return redirectString;
@@ -309,7 +312,7 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
     public void setFileIdList(List<Long> fileIdList) { 
         this.fileIdList = fileIdList;
     }
-    
+
     public Long getStudyId() {
         return studyId;
     }
@@ -325,11 +328,11 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
     public void setUser(VDCUser user) {
         this.user = user;
     }
-    
+
     public String getWorkflowType() {
         return workflowType;
     }
-    
+
     /**
      * Used in the Creator Workflow Success page - for url of dataverse home page.
      * @return hostUrl (based on inet Address)
@@ -337,7 +340,7 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
     public String getHostUrl() {
         return PropertyUtil.getHostUrl();
     }
-    
+
     public boolean isContributorWorkflow() {
         return workflowType!=null && workflowType.equals(WORKFLOW_TYPE_CONTRIBUTOR);
     }
@@ -350,5 +353,5 @@ public class LoginWorkflowBean extends VDCBaseBean implements java.io.Serializab
     public boolean isPlainWorkflow() {
         return workflowType==null;
     }
-   
+
 }

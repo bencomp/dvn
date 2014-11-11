@@ -127,7 +127,11 @@ public class Study implements java.io.Serializable {
       
     }
        
-    
+    /**
+     * Get the global study identifier, i.e. the handle or DOI.
+     *
+     * @return a String formatted [protocol]:[authority]/[studyId]
+     */
     public String getGlobalId() {
         return protocol+":"+authority+"/"+getStudyId();
     }
