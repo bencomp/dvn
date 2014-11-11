@@ -164,7 +164,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
         	 * lower case. Case in email addresses may change over time.
         	 */
             
-        	LOGGER.log(Level.INFO, "Reading email attribute as ", shibProps.get(ATTR_NAME_EMAIL));
+            LOGGER.log(Level.INFO, "Reading email attribute as {0}", shibProps.get(ATTR_NAME_EMAIL));
             String attr_email = shibProps.get(ATTR_NAME_EMAIL).toLowerCase();
             
             if (attr_email == null) {
