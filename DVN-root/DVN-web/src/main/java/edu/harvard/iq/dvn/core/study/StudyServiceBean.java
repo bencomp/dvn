@@ -984,7 +984,7 @@ public class StudyServiceBean implements edu.harvard.iq.dvn.core.study.StudyServ
 
         if (queryStr != null) {
             Query query = em.createNativeQuery(queryStr);
-            System.out.print("sort Test global-Id-sort " + queryStr);
+            logger.fine("sort Test global-Id-sort " + queryStr);
             List<Long> returnList = new ArrayList<Long>();
             for (Object currentResult : query.getResultList()) {
                 // convert results into Longs

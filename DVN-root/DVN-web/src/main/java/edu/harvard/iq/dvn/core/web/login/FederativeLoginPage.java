@@ -188,7 +188,7 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
                 }
                 if (user != null) {
                     if (user.isActive()) {
-                        LOGGER.log(Level.INFO, "User is active!", user.getUserName());
+                        LOGGER.log(Level.INFO, "User {0} is active!", user.getUserName());
                         if (!user.isNetworkAdmin() || ALLOW_ADMIN) {
                             final String forward = dvnLogin(user, studyId);
                             LOGGER.log(Level.INFO, "User forwarded to {0}", forward);
