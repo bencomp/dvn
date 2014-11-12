@@ -242,31 +242,31 @@ public class FederativeLoginPage extends VDCBaseBean implements java.io.Serializ
                     final String usrorg = shibProps.get(ATTR_NAME_ORG);
 
                     if (usrgivenname != null) {
-                        LOGGER.log(Level.INFO, "Given Name: ", usrgivenname);
+                        LOGGER.log(Level.INFO, "Given Name: {0}", usrgivenname);
                         userdata.put("givenname", usrgivenname);
                     }
                     if (usrprefix != null) {
-                        LOGGER.log(Level.INFO, "Prefix: ", usrprefix);
+                        LOGGER.log(Level.INFO, "Prefix: {0}", usrprefix);
                         userdata.put("prefix", usrprefix);
                     }
                     if (usrsurname != null) {
-                        LOGGER.log(Level.INFO, "Surname: ", usrsurname);
+                        LOGGER.log(Level.INFO, "Surname: {0}", usrsurname);
                         userdata.put("surname", usrsurname);
                     }
                     if (usremail != null) {
-                        LOGGER.log(Level.INFO, "Email: ", usremail);
+                        LOGGER.log(Level.INFO, "Email: {0}", usremail);
                         userdata.put("email", usremail);
                     }
                     if (usrprincipal != null) {
-                        LOGGER.log(Level.INFO, "Principal Name: ", usrprincipal);
+                        LOGGER.log(Level.INFO, "Principal Name: {0}", usrprincipal);
                         userdata.put("principal", usrprincipal);
                     }
                     if (usrrole != null) {
-                        LOGGER.log(Level.INFO, "Role: ", usrrole);
+                        LOGGER.log(Level.INFO, "Role: {0}", usrrole);
                         userdata.put("role", usrrole);
                     }
                     if (usrorg != null) {
-                        LOGGER.log(Level.INFO, "Organization:", usrorg);
+                        LOGGER.log(Level.INFO, "Organization: {0}", usrorg);
                         userdata.put("organization", usrorg);
                     }
                     final String usertype = getUserType(userdata);
