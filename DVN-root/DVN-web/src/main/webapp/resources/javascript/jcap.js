@@ -1,12 +1,12 @@
-<!-- Original:  Jonathan Feaster (http://www.archreality.com/) -->
+//<!-- Original:  Jonathan Feaster (http://www.archreality.com/) -->
 
-<!-- Web Site:  http://www.archreality.com/jcap/ -->
+//<!-- Web Site:  http://www.archreality.com/jcap/ -->
 
-<!-- Version: 2.0 -->
+//<!-- Version: 2.0 -->
 
-<!-- Based on: Gimpy CAPTCHA Project at Carnegie Mellon University (http://www.captcha.net/) -->
+//<!-- Based on: Gimpy CAPTCHA Project at Carnegie Mellon University (http://www.captcha.net/) -->
 
-<!-- Begin
+//<!-- Begin
 
 var imgdir = "/dvn/resources/cimg/"; // identify directory where captcha images are located
 var jfldid = "uword"; // identify word field id name
